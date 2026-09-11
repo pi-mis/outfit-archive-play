@@ -178,7 +178,4 @@ export async function exportOutfit(items: Item[], total: number, zones: Zone[] =
   a.click();
   URL.revokeObjectURL(url);
 
-  if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({ files: [file], title: "Il mio outfit" }).catch(() => undefined);
-  }
 }
