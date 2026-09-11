@@ -308,14 +308,35 @@ export function FittingRoom({
             </div>
           </div>
 
-          <div className="relative px-5 pb-6 text-center">
-            <p className="text-sm text-muted-foreground">
+          <div className="relative mx-auto w-full max-w-md px-4 pb-3">
+            <p className="mb-2 text-center text-[11px] text-muted-foreground">
               Proporzioni reali · figura di {BODY_HEIGHT_CM} cm
             </p>
-            <p className="font-display text-2xl">{formatPrice(total)}</p>
+            <div className="flex items-center justify-between gap-3 rounded-full border border-border bg-card/90 px-4 py-2 backdrop-blur">
+              <span className="text-sm">
+                <span className="eyebrow mr-2">Totale</span>
+                {formatPrice(total)}
+              </span>
+              <button
+                onClick={onClose}
+                aria-label="Torna alla selezione"
+                className="relative flex size-11 items-center justify-center rounded-full bg-[var(--sand)] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.2)] ring-2 ring-primary/25 transition-transform hover:scale-105 active:scale-95"
+              >
+                <span className="absolute inset-1.5 rounded-full border border-primary/20" />
+                <span className="grid grid-cols-2 gap-1.5">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Circle key={i} className="size-1.5 fill-primary/70 text-primary/70" />
+                  ))}
+                </span>
+              </button>
+            </div>
+            <p className="mt-1 text-center text-[11px] text-muted-foreground">
+              Premi il bottone per tornare alla selezione
+            </p>
           </div>
         </motion.div>
       )}
+
     </AnimatePresence>
   );
 }
