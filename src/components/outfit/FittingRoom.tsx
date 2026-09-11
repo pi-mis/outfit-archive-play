@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Circle, RotateCcw, X } from "lucide-react";
 import type { Item, Zone } from "@/lib/catalog";
 import { BODY_HEIGHT_CM, fittingHeightCm, formatPrice } from "@/lib/catalog";
+import { useI18n } from "@/lib/i18n";
 
 /**
  * Manichino bianco a proporzioni reali: 170 cm mappati su 340 unità (2 unità = 1 cm).
