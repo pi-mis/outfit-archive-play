@@ -34,6 +34,20 @@ export async function shrinkImage(file: File, maxSide = 1600): Promise<Blob> {
   );
 }
 
+/** Read a blob as a data URL (used to send photos to the cut-out service). */
+export function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("Lettura del file non riuscita"));
+    reader.readAsDataURL(blob);
+  });
+}
+
+export async function dataUrlToBlob(dataUrl: string): Promise<Blob> {
+  return await (await fetch(dataUrl)).blob();
+}
+
 export function suggestCode(typeKey: string) {
   const prefix = typeKey.slice(0, 3).toUpperCase();
   const stamp = Date.now().toString().slice(-5);
