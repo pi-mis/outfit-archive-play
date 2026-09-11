@@ -380,7 +380,8 @@ export function FittingRoom({
                   />
                 );
               })}
-            </div>
+              </div>
+            </motion.div>
 
             <AnimatePresence>
               {zoom && (
