@@ -51,16 +51,24 @@ function Mannequin({ height }: { height: number }) {
   );
 }
 
-/** Sagome degli specchi vintage: barocco, goccia, ovale intagliato, esagono, ovale dorato. */
+/** Sagome degli specchi vintage ispirate alla parete del negozio. */
 const MIRROR_SHAPES = {
+  /* grande cartouche barocca dorata, cimasa a foglia d'acanto */
   barocco:
-    "M50 2c9 6 15 4 21 10 7 7 3 14 8 20 6 7 15 9 15 22 0 10-8 14-8 24 0 11 6 14 6 24 0 12-9 16-13 24-4 8-2 16-9 21-7 5-14 1-20 5-6 4-9 10-16 6-7-4-7-11-13-15-6-4-14-2-18-9-4-7 0-14-3-21-3-7-10-10-10-20 0-10 7-13 7-23 0-10-6-14-3-23 3-9 12-9 17-16 5-7 3-15 11-20 8-5 17 0 28-9Z",
+    "M50 1c3 5 6 7 10 9 6 3 9-1 13 3 4 4 1 8 5 11 5 4 11 2 14 8 3 6-1 11 1 17 2 7 6 10 6 18 0 7-4 11-5 18-1 6 2 11 0 17-2 7-8 8-11 14-3 6-1 12-7 15-6 3-11-1-16 1-5 2-7 7-10 7s-5-5-10-7c-5-2-10 2-16-1-6-3-4-9-7-15-3-6-9-7-11-14-2-6 1-11 0-17-1-7-5-11-5-18 0-8 4-11 6-18 2-6-2-11 1-17 3-6 9-4 14-8 4-3 1-7 5-11 4-4 7 0 13-3 4-2 7-4 10-9Z",
+  /* specchio a goccia/foglia appuntito */
   goccia:
-    "M50 2c16 0 30 18 34 42 4 24-4 46-16 56-8 7-28 7-36 0C20 90 12 68 16 44 20 20 34 2 50 2Z",
+    "M50 2c13 8 26 24 30 42 4 19-4 38-16 47-8 6-20 6-28 0C24 82 16 63 20 44 24 26 37 10 50 2Z",
+  /* ovale nero intagliato con corona e volute */
   ovaleIntagliato:
-    "M50 2c6 4 10 2 14 6 5 5 2 9 7 12 6 3 12 4 15 12 4 9 2 20 2 32s2 23-2 32c-3 8-9 9-15 12-5 3-2 7-7 12-4 4-8 2-14 6-6-4-10-2-14-6-5-5-2-9-7-12-6-3-12-4-15-12-4-9-2-20-2-32s-2-23 2-32c3-8 9-9 15-12 5-3 2-7 7-12 4-4 8-2 14-6Z",
-  esagono: "M50 2 96 27v46L50 98 4 73V27Z",
-  ovale: "M50 2c22 0 38 21 38 48S72 98 50 98 12 77 12 50 28 2 50 2Z",
+    "M50 1c4 5 8 6 11 11 3 4 8 3 12 7 4 4 2 8 6 11 5 4 11 5 13 12 2 6-1 11 0 18 1 8 4 12 4 20s-3 12-4 20c-1 7 2 12 0 18-2 7-8 8-13 12-4 3-2 7-6 11-4 4-9 3-12 7-3 5-7 6-11 11-4-5-8-6-11-11-3-4-8-3-12-7-4-4-2-8-6-11-5-4-11-5-13-12-2-6 1-11 0-18-1-8-4-12-4-20s3-12 4-20c1-7-2-12 0-18 2-7 8-8 13-12 4-3 2-7 6-11 4-4 9-3 12-7 3-5 7-6 11-11Z",
+  /* esagono allungato in stile déco */
+  esagono: "M50 2 92 22v56L50 98 8 78V22Z",
+  /* ovale liscio dorato */
+  ovale: "M50 2c21 0 37 21 37 48S71 98 50 98 13 77 13 50 29 2 50 2Z",
+  /* specchio rettangolare sagomato con cimasa */
+  cimasa:
+    "M50 1c2 5 6 7 11 8-4 3-5 6-4 10 6-1 14 1 19 4 3 12 2 26 2 40s1 27-2 37c-6 3-14 4-20 6-2 2-4 3-6 5-2-2-4-3-6-5-6-2-14-3-20-6-3-10-2-23-2-37s-1-28 2-40c5-3 13-5 19-4 1-4 0-7-4-10 5-1 9-3 11-8Z",
 } as const;
 
 function WallMirror({
@@ -70,10 +78,12 @@ function WallMirror({
 }: {
   className: string;
   shape: keyof typeof MIRROR_SHAPES;
-  tone?: "oro" | "bronzo";
+  tone?: "oro" | "bronzo" | "nero";
 }) {
-  const frame = tone === "oro" ? "oklch(0.74 0.09 78)" : "oklch(0.42 0.05 52)";
-  const frameLight = tone === "oro" ? "oklch(0.9 0.08 90)" : "oklch(0.6 0.05 56)";
+  const frame =
+    tone === "oro" ? "oklch(0.72 0.1 78)" : tone === "bronzo" ? "oklch(0.45 0.05 52)" : "oklch(0.22 0.01 60)";
+  const frameLight =
+    tone === "oro" ? "oklch(0.9 0.08 90)" : tone === "bronzo" ? "oklch(0.62 0.05 56)" : "oklch(0.4 0.01 60)";
   const id = `${shape}-${tone}`;
   return (
     <div className={`pointer-events-none absolute ${className}`} aria-hidden>
@@ -95,55 +105,79 @@ function WallMirror({
           d={MIRROR_SHAPES[shape]}
           fill={`url(#g-${id})`}
           stroke={`url(#f-${id})`}
-          strokeWidth={7}
+          strokeWidth={8}
           strokeLinejoin="round"
           style={{ filter: "drop-shadow(0 12px 18px rgba(70,50,35,0.4))" }}
+        />
+        <path
+          d={MIRROR_SHAPES[shape]}
+          fill="none"
+          stroke={frameLight}
+          strokeWidth={2}
+          strokeLinejoin="round"
+          opacity={0.7}
         />
       </svg>
     </div>
   );
 }
 
-/** Macchina da cucire vintage appoggiata su un tavolino di legno. */
+/** Macchina da cucire Singer d'epoca: volantino a raggi, braccio curvo, base in legno. */
 function SewingMachine({ className }: { className: string }) {
   return (
     <div className={`pointer-events-none absolute ${className}`} aria-hidden>
-      <svg viewBox="0 0 140 120" className="size-full">
+      <svg viewBox="0 0 200 150" className="size-full">
         <defs>
           <linearGradient id="sm-body" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="oklch(0.42 0.03 60)" />
-            <stop offset="100%" stopColor="oklch(0.24 0.02 50)" />
+            <stop offset="0%" stopColor="oklch(0.38 0.02 60)" />
+            <stop offset="100%" stopColor="oklch(0.19 0.01 50)" />
           </linearGradient>
           <linearGradient id="sm-wood" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="oklch(0.6 0.06 62)" />
-            <stop offset="100%" stopColor="oklch(0.45 0.05 55)" />
+            <stop offset="0%" stopColor="oklch(0.68 0.07 62)" />
+            <stop offset="100%" stopColor="oklch(0.5 0.06 55)" />
           </linearGradient>
         </defs>
-        {/* tavolino */}
-        <rect x="4" y="86" width="132" height="10" rx="3" fill="url(#sm-wood)" />
-        <rect x="14" y="96" width="8" height="24" fill="oklch(0.45 0.05 55)" />
-        <rect x="118" y="96" width="8" height="24" fill="oklch(0.45 0.05 55)" />
-        {/* base macchina */}
-        <rect x="16" y="74" width="108" height="12" rx="4" fill="url(#sm-body)" />
-        {/* braccio */}
+
+        {/* piano in legno con bordo smussato e plinto scuro */}
+        <path d="M14 104h172l-10 14H24Z" fill="oklch(0.42 0.05 55)" />
+        <path d="M8 96h184l-6 8H14Z" fill="url(#sm-wood)" />
+        <rect x="20" y="118" width="160" height="16" rx="2" fill="oklch(0.26 0.02 50)" />
+
+        {/* letto della macchina (piastra) */}
+        <rect x="34" y="84" width="132" height="12" rx="2" fill="url(#sm-body)" />
+        <ellipse cx="146" cy="88" rx="12" ry="4" fill="oklch(0.7 0.02 80)" opacity="0.6" />
+
+        {/* colonna a sinistra, braccio curvo e testa a destra */}
         <path
-          d="M28 74V44c0-11 8-19 19-19h44c11 0 19 8 19 19v12c0 6-5 10-11 10h-8c-5 0-8 3-8 8v0h-9V44H55v30Z"
+          d="M46 84V54c0-14 10-22 24-24 12-2 28 0 44 2 14 2 26 6 30 16 3 8 2 18 2 26v10h-18V64c0-8-6-12-16-14-12-2-26-3-34 0-6 2-8 6-8 12v22Z"
           fill="url(#sm-body)"
         />
-        {/* ago */}
-        <rect x="85" y="66" width="3" height="9" fill="oklch(0.85 0.02 90)" />
-        {/* volantino */}
-        <circle cx="112" cy="52" r="11" fill="oklch(0.3 0.02 50)" />
-        <circle cx="112" cy="52" r="4" fill="oklch(0.74 0.09 78)" />
+        {/* testa con barra ago */}
+        <rect x="128" y="52" width="26" height="34" rx="6" fill="url(#sm-body)" />
+        <rect x="139" y="30" width="5" height="22" rx="2" fill="oklch(0.32 0.02 50)" />
+        <rect x="139" y="86" width="3" height="10" fill="oklch(0.85 0.02 90)" />
+        <circle cx="155" cy="70" r="5" fill="oklch(0.3 0.02 50)" />
+
+        {/* volantino a raggi con manovella */}
+        <circle cx="40" cy="52" r="22" fill="none" stroke="oklch(0.3 0.02 50)" strokeWidth="6" />
+        <g stroke="oklch(0.3 0.02 50)" strokeWidth="4">
+          <path d="M40 32v40M20 52h40M26 38l28 28M54 38 26 66" />
+        </g>
+        <circle cx="40" cy="52" r="7" fill="oklch(0.26 0.02 50)" />
+        <path d="M40 60c-6 6-10 10-12 18" stroke="oklch(0.3 0.02 50)" strokeWidth="5" fill="none" />
+        <rect x="20" y="76" width="12" height="6" rx="3" fill="oklch(0.5 0.06 55)" />
+
+        {/* decori dorati */}
+        <path d="M60 74h56" stroke="oklch(0.74 0.09 78)" strokeWidth="2" fill="none" opacity="0.8" />
+        <path d="M70 62c6-4 14-4 20 0" stroke="oklch(0.74 0.09 78)" strokeWidth="1.6" fill="none" opacity="0.7" />
         {/* rocchetto di filo */}
-        <rect x="50" y="18" width="4" height="10" fill="oklch(0.74 0.09 78)" />
-        <ellipse cx="52" cy="16" rx="7" ry="4" fill="oklch(0.62 0.12 28)" />
-        {/* decorazione dorata */}
-        <path d="M40 60h34" stroke="oklch(0.74 0.09 78)" strokeWidth="1.5" fill="none" />
+        <rect x="98" y="26" width="4" height="12" fill="oklch(0.74 0.09 78)" />
+        <ellipse cx="100" cy="24" rx="7" ry="4" fill="oklch(0.62 0.12 28)" />
       </svg>
     </div>
   );
 }
+
 
 const SPRING = { type: "spring" as const, stiffness: 210, damping: 24 };
 
