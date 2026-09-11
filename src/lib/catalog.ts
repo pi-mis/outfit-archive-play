@@ -39,7 +39,9 @@ export type Item = {
   price: number;
   status: ItemStatus;
   original_photos: string[];
+  back_original_photos: string[];
   processed_image_url: string | null;
+  back_image_url: string | null;
   thumbnail_url: string | null;
   height_cm: number;
   scale: number;

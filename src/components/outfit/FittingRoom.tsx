@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Circle, X } from "lucide-react";
+import { Circle, RotateCcw, X } from "lucide-react";
 import type { Item, Zone } from "@/lib/catalog";
 import { BODY_HEIGHT_CM, fittingHeightCm, formatPrice } from "@/lib/catalog";
 
@@ -198,10 +198,16 @@ export function FittingRoom({
 }) {
   const [stage, setStage] = useState(520);
   const [zoom, setZoom] = useState<Item | null>(null);
+  const [back, setBack] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pressed = useRef<Item | null>(null);
   const moved = useRef(false);
   const start = useRef({ x: 0, y: 0 });
+
+  const faceOf = (item: Item) =>
+    (back ? (item.back_image_url ?? item.processed_image_url) : item.processed_image_url) ??
+    item.thumbnail_url ??
+    "";
 
   const itemAt = (x: number, y: number): Item | null => {
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
@@ -220,6 +226,7 @@ export function FittingRoom({
   useEffect(() => {
     if (!open) {
       setZoom(null);
+      setBack(false);
       pressed.current = null;
       if (timer.current) clearTimeout(timer.current);
     }
@@ -292,9 +299,11 @@ export function FittingRoom({
               ))}
             </div>
 
-            <div
+            <motion.div
               className="relative touch-none"
-              style={{ height: stage, width: Math.max(160, stage * 0.42) }}
+              animate={{ rotateY: back ? 180 : 0 }}
+              transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+              style={{ height: stage, width: Math.max(160, stage * 0.42), transformStyle: "preserve-3d" }}
               onPointerDown={(e) => {
                 moved.current = false;
                 start.current = { x: e.clientX, y: e.clientY };
@@ -325,6 +334,7 @@ export function FittingRoom({
               onPointerCancel={endPress}
               onPointerLeave={endPress}
             >
+              <div className="absolute inset-0" style={{ transform: back ? "scaleX(-1)" : undefined }}>
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -348,7 +358,7 @@ export function FittingRoom({
                     key={item.id}
                     data-item-id={item.id}
                     draggable={false}
-                    src={item.processed_image_url ?? item.thumbnail_url ?? ""}
+                    src={faceOf(item)}
                     alt={item.name}
                     initial={{
                       opacity: 0,
@@ -370,7 +380,8 @@ export function FittingRoom({
                   />
                 );
               })}
-            </div>
+              </div>
+            </motion.div>
 
             <AnimatePresence>
               {zoom && (
@@ -382,7 +393,7 @@ export function FittingRoom({
                   className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center bg-[oklch(0.95_0.012_86)]/92 backdrop-blur-sm"
                 >
                   <img
-                    src={zoom.processed_image_url ?? zoom.thumbnail_url ?? ""}
+                    src={faceOf(zoom)}
                     alt={zoom.name}
                     className="max-h-[70vh] w-auto max-w-[88vw] object-contain"
                   />
@@ -403,6 +414,14 @@ export function FittingRoom({
                 <span className="eyebrow mr-2">Totale</span>
                 {formatPrice(total)}
               </span>
+              <button
+                onClick={() => setBack((v) => !v)}
+                aria-label={back ? "Mostra il fronte" : "Gira il manichino e vedi il retro"}
+                className="flex items-center gap-2 rounded-full border border-border px-3 py-2 text-[11px] tracking-wide transition-colors hover:bg-secondary"
+              >
+                <RotateCcw className="size-4" />
+                {back ? "Fronte" : "Retro"}
+              </button>
               <button
                 onClick={onClose}
                 aria-label="Torna alla selezione"
