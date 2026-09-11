@@ -57,6 +57,8 @@ export type Database = {
       }
       items: {
         Row: {
+          back_image_url: string | null
+          back_original_photos: string[]
           brand: string | null
           code: string
           condition: string | null
@@ -82,6 +84,8 @@ export type Database = {
           zone_key: string
         }
         Insert: {
+          back_image_url?: string | null
+          back_original_photos?: string[]
           brand?: string | null
           code: string
           condition?: string | null
@@ -107,6 +111,8 @@ export type Database = {
           zone_key: string
         }
         Update: {
+          back_image_url?: string | null
+          back_original_photos?: string[]
           brand?: string | null
           code?: string
           condition?: string | null
