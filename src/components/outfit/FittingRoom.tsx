@@ -196,6 +196,7 @@ export function FittingRoom({
   total: number;
   onOpenItem?: (item: Item) => void;
 }) {
+  const { t } = useI18n();
   const [stage, setStage] = useState(520);
   const [zoom, setZoom] = useState<Item | null>(null);
   const [back, setBack] = useState(false);
@@ -259,10 +260,10 @@ export function FittingRoom({
           <div className="pointer-events-none absolute inset-x-0 bottom-[26%] h-2 bg-[oklch(0.75_0.04_74)]" />
 
           <div className="relative flex items-center justify-between px-5 py-4">
-            <p className="eyebrow">Camerino</p>
+            <p className="eyebrow">{t("fittingRoom")}</p>
             <button
               onClick={onClose}
-              aria-label="Esci dal camerino"
+              aria-label={t("exitFittingRoom")}
               className="flex size-9 items-center justify-center rounded-full border border-border bg-card/80 text-foreground backdrop-blur"
             >
               <X className="size-4" />
@@ -407,24 +408,24 @@ export function FittingRoom({
 
           <div className="relative mx-auto w-full max-w-md px-4 pb-3">
             <p className="mb-2 text-center text-[11px] text-muted-foreground">
-              Proporzioni reali · figura di {BODY_HEIGHT_CM} cm · tocca un capo per la scheda, tieni premuto per ingrandire
+              {t("realProportions")} {BODY_HEIGHT_CM} cm · {t("fittingHint")}
             </p>
             <div className="flex items-center justify-between gap-3 rounded-full border border-border bg-card/90 px-4 py-2 backdrop-blur">
               <span className="text-sm">
-                <span className="eyebrow mr-2">Totale</span>
+                <span className="eyebrow mr-2">{t("total")}</span>
                 {formatPrice(total)}
               </span>
               <button
                 onClick={() => setBack((v) => !v)}
-                aria-label={back ? "Mostra il fronte" : "Gira il manichino e vedi il retro"}
+                aria-label={back ? t("showFront") : t("showBack")}
                 className="flex items-center gap-2 rounded-full border border-border px-3 py-2 text-[11px] tracking-wide transition-colors hover:bg-secondary"
               >
                 <RotateCcw className="size-4" />
-                {back ? "Fronte" : "Retro"}
+                {back ? t("front") : t("back")}
               </button>
               <button
                 onClick={onClose}
-                aria-label="Torna alla selezione"
+                aria-label={t("backToSelection")}
                 className="relative flex size-11 items-center justify-center rounded-full bg-[var(--sand)] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.2)] ring-2 ring-primary/25 transition-transform hover:scale-105 active:scale-95"
               >
                 <span className="absolute inset-1.5 rounded-full border border-primary/20" />
@@ -435,9 +436,7 @@ export function FittingRoom({
                 </span>
               </button>
             </div>
-            <p className="mt-1 text-center text-[11px] text-muted-foreground">
-              Premi il bottone per tornare alla selezione
-            </p>
+            <p className="mt-1 text-center text-[11px] text-muted-foreground">{t("pressToReturn")}</p>
           </div>
         </motion.div>
       )}
