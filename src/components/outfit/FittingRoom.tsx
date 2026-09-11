@@ -51,7 +51,7 @@ export function FittingRoom({
   const [stage, setStage] = useState(520);
 
   useEffect(() => {
-    const measure = () => setStage(Math.max(360, Math.min(680, window.innerHeight - 210)));
+    const measure = () => setStage(Math.max(320, Math.min(620, window.innerHeight - 260)));
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
@@ -94,10 +94,10 @@ export function FittingRoom({
             {/* specchio vintage */}
             <div
               className="relative rounded-[999px_999px_28px_28px] border-[10px] border-[oklch(0.62_0.05_75)] bg-[radial-gradient(120%_80%_at_50%_10%,oklch(0.94_0.012_88),oklch(0.86_0.02_80))] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6)]"
-              style={{ height: stage + 60, width: Math.min(360, stage * 0.62) }}
+              style={{ height: stage + 80, width: Math.min(360, stage * 0.66) }}
             >
               <div className="absolute inset-0 overflow-hidden rounded-[999px_999px_20px_20px]">
-                <div className="absolute inset-x-0 bottom-0" style={{ height: stage + 24 }}>
+                <div className="absolute inset-x-0 bottom-4" style={{ height: stage }}>
                   <Mannequin height={stage} />
                   {outfit.map((item) => {
                     const zone = zoneOf(item.zone_key);
