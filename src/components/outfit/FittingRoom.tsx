@@ -207,11 +207,14 @@ export function FittingRoom({
               transition={{ duration: 0.5, delay: 0.05 }}
               className="pointer-events-none absolute inset-0"
             >
-              <WallMirror shape="arco" className="left-[3%] top-[6%] h-[34%] w-[18%]" />
-              <WallMirror shape="ovale" className="left-[6%] top-[46%] h-[22%] w-[13%]" />
-              <WallMirror shape="tondo" className="right-[5%] top-[9%] size-[15%]" />
-              <WallMirror shape="rettangolo" className="right-[3%] top-[32%] h-[30%] w-[17%]" />
+              <WallMirror shape="barocco" className="left-[2%] top-[5%] h-[36%] w-[22%]" />
+              <WallMirror shape="goccia" tone="bronzo" className="left-[8%] top-[47%] h-[20%] w-[10%]" />
+              <WallMirror shape="ovaleIntagliato" tone="bronzo" className="right-[6%] top-[7%] h-[26%] w-[17%]" />
+              <WallMirror shape="ovale" className="right-[4%] top-[38%] h-[22%] w-[10%]" />
+              <WallMirror shape="esagono" tone="bronzo" className="right-[16%] top-[56%] h-[12%] w-[13%]" />
             </motion.div>
+
+            <SewingMachine className="bottom-[8%] left-[3%] h-[16%] w-[24%]" />
 
             {/* luci vintage sopra la parete */}
             <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center gap-7">
