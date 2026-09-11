@@ -87,7 +87,7 @@ function WallMirror({
   const id = `${shape}-${tone}`;
   return (
     <div className={`pointer-events-none absolute ${className}`} aria-hidden>
-      <svg viewBox="0 0 100 100" className="size-full overflow-visible" preserveAspectRatio="none">
+      <svg viewBox="0 0 100 100" className="size-full overflow-visible" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id={`f-${id}`} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor={frameLight} />
