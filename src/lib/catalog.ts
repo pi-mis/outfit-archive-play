@@ -94,7 +94,7 @@ export const ZONE_CM_RANGE: Record<string, [number, number]> = {
   collana: [8, 18],
   top: [45, 95],
   bottom: [38, 100],
-  scarpe: [14, 42],
+  scarpe: [24, 52],
 };
 
 export function fittingHeightCm(item: Item) {

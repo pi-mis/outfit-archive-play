@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Circle, X } from "lucide-react";
 import type { Item, Zone } from "@/lib/catalog";
@@ -187,14 +187,43 @@ export function FittingRoom({
   outfit,
   zones,
   total,
+  onOpenItem,
 }: {
   open: boolean;
   onClose: () => void;
   outfit: Item[];
   zones: Zone[];
   total: number;
+  onOpenItem?: (item: Item) => void;
 }) {
   const [stage, setStage] = useState(520);
+  const [zoom, setZoom] = useState<Item | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pressed = useRef<Item | null>(null);
+  const moved = useRef(false);
+  const start = useRef({ x: 0, y: 0 });
+
+  const itemAt = (x: number, y: number): Item | null => {
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    const id = el?.dataset?.["itemId"];
+    return id ? (outfit.find((i) => i.id === id) ?? null) : null;
+  };
+
+  const endPress = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+    if (!zoom && !moved.current && pressed.current) onOpenItem?.(pressed.current);
+    pressed.current = null;
+    setZoom(null);
+  };
+
+  useEffect(() => {
+    if (!open) {
+      setZoom(null);
+      pressed.current = null;
+      if (timer.current) clearTimeout(timer.current);
+    }
+  }, [open]);
 
   useEffect(() => {
     const measure = () => setStage(Math.max(300, Math.min(600, window.innerHeight - 250)));
@@ -263,7 +292,39 @@ export function FittingRoom({
               ))}
             </div>
 
-            <div className="relative" style={{ height: stage, width: Math.max(160, stage * 0.42) }}>
+            <div
+              className="relative touch-none"
+              style={{ height: stage, width: Math.max(160, stage * 0.42) }}
+              onPointerDown={(e) => {
+                moved.current = false;
+                start.current = { x: e.clientX, y: e.clientY };
+                pressed.current = itemAt(e.clientX, e.clientY);
+                if (timer.current) clearTimeout(timer.current);
+                if (pressed.current) {
+                  const target = pressed.current;
+                  timer.current = setTimeout(() => setZoom(target), 260);
+                }
+              }}
+              onPointerMove={(e) => {
+                if (zoom) {
+                  const next = itemAt(e.clientX, e.clientY);
+                  if (next && next.id !== zoom.id) setZoom(next);
+                  return;
+                }
+                const dx = e.clientX - start.current.x;
+                const dy = e.clientY - start.current.y;
+                if (Math.hypot(dx, dy) > 14) {
+                  moved.current = true;
+                  if (timer.current) {
+                    clearTimeout(timer.current);
+                    timer.current = null;
+                  }
+                }
+              }}
+              onPointerUp={endPress}
+              onPointerCancel={endPress}
+              onPointerLeave={endPress}
+            >
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -276,14 +337,17 @@ export function FittingRoom({
               {sorted.map((item, i) => {
                 const zone = zoneOf(item.zone_key);
                 const anchor = zone?.anchor_y_cm ?? 0;
+                const shoes = item.zone_key === "scarpe";
                 const h = Math.min(
-                  fittingHeightCm(item) * k,
-                  Math.max(24, stage - anchor * k + (item.zone_key === "scarpe" ? 30 * k : 0)),
+                  fittingHeightCm(item) * k * (shoes ? 1.3 : 1),
+                  Math.max(24, stage - anchor * k + (shoes ? 40 * k : 0)),
                 );
-                const top = item.zone_key === "scarpe" ? stage - h : anchor * k;
+                const top = shoes ? stage - h : anchor * k;
                 return (
                   <motion.img
                     key={item.id}
+                    data-item-id={item.id}
+                    draggable={false}
                     src={item.processed_image_url ?? item.thumbnail_url ?? ""}
                     alt={item.name}
                     initial={{
@@ -307,11 +371,32 @@ export function FittingRoom({
                 );
               })}
             </div>
+
+            <AnimatePresence>
+              {zoom && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.94 }}
+                  transition={{ duration: 0.18 }}
+                  className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center bg-[oklch(0.95_0.012_86)]/92 backdrop-blur-sm"
+                >
+                  <img
+                    src={zoom.processed_image_url ?? zoom.thumbnail_url ?? ""}
+                    alt={zoom.name}
+                    className="max-h-[70vh] w-auto max-w-[88vw] object-contain"
+                  />
+                  <p className="mt-3 font-display text-lg">{zoom.name}</p>
+                  <p className="text-sm text-muted-foreground">{formatPrice(Number(zoom.price))}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
 
           <div className="relative mx-auto w-full max-w-md px-4 pb-3">
             <p className="mb-2 text-center text-[11px] text-muted-foreground">
-              Proporzioni reali · figura di {BODY_HEIGHT_CM} cm
+              Proporzioni reali · figura di {BODY_HEIGHT_CM} cm · tocca un capo per la scheda, tieni premuto per ingrandire
             </p>
             <div className="flex items-center justify-between gap-3 rounded-full border border-border bg-card/90 px-4 py-2 backdrop-blur">
               <span className="text-sm">
