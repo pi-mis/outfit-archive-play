@@ -159,8 +159,8 @@ export function OutfitBuilder() {
           </span>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => exportOutfit(outfit, total)}
-              aria-label="Salva o condividi outfit"
+              onClick={() => exportOutfit(outfit, total, zones.data ?? [])}
+              aria-label="Scarica la foto dell'outfit"
               className="flex size-9 items-center justify-center rounded-full border border-border transition-colors hover:bg-secondary"
             >
               <Download className="size-4" />
