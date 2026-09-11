@@ -11,6 +11,7 @@ import {
   type Item,
 } from "@/lib/catalog";
 import { exportOutfit } from "@/lib/share";
+import { useI18n } from "@/lib/i18n";
 import { ZoneRow } from "./ZoneRow";
 import { ItemSheet } from "./ItemSheet";
 import { FittingRoom } from "./FittingRoom";
@@ -18,6 +19,7 @@ import { FittingRoom } from "./FittingRoom";
 type Selection = { type: string; index: number; locked: boolean };
 
 export function OutfitBuilder() {
+  const { t, zoneLabel, zoneAll, zoneNone } = useI18n();
   const zones = useQuery({ queryKey: ["zones"], queryFn: fetchZones });
   const types = useQuery({ queryKey: ["item_types"], queryFn: fetchItemTypes });
   const items = useQuery({ queryKey: ["items"], queryFn: fetchItems });
@@ -111,17 +113,17 @@ export function OutfitBuilder() {
     setExporting(true);
     try {
       await exportOutfit(outfit, zones.data ?? []);
-      toast.success("Cartolina pronta");
+      toast.success(t("postcardReady"));
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
-      toast.error("Non è stato possibile salvare la foto. Riprova.");
+      toast.error(t("postcardError"));
     } finally {
       setExporting(false);
     }
   };
 
   if (zones.isLoading || items.isLoading) {
-    return <p className="py-24 text-center text-sm text-muted-foreground">Stiamo aprendo l'armadio…</p>;
+    return <p className="py-24 text-center text-sm text-muted-foreground">{t("loading")}</p>;
   }
 
   return (
@@ -132,18 +134,18 @@ export function OutfitBuilder() {
             value={size}
             onChange={(e) => setSize(e.target.value)}
             className="rounded-full border border-border bg-card px-4 py-2 text-xs tracking-wide"
-            aria-label="La mia taglia"
+            aria-label={t("sizeAll")}
           >
-            <option value="all">La mia taglia · tutte</option>
+            <option value="all">{t("sizeAll")}</option>
             {sizes.map((s) => (
               <option key={s} value={s}>
-                Taglia {s}
+                {t("size")} {s}
               </option>
             ))}
           </select>
           <label className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs tracking-wide">
             <input type="checkbox" checked={showSold} onChange={(e) => setShowSold(e.target.checked)} />
-            Mostra anche l'archivio venduto
+            {t("showSold")}
           </label>
         </div>
 
@@ -151,9 +153,9 @@ export function OutfitBuilder() {
           {visibleZones.map((zone) => (
             <ZoneRow
               key={zone.key}
-              label={zone.label}
-              allLabel={zone.all_label}
-              noneLabel={zone.none_label}
+              label={zoneLabel(zone.key, zone.label)}
+              allLabel={zoneAll(zone.key, zone.all_label)}
+              noneLabel={zoneNone(zone.key, zone.none_label)}
               types={(types.data ?? []).filter((t) => t.zone_key === zone.key)}
               selectedType={selectionFor(zone.key).type}
               onSelectType={(value) => update(zone.key, { type: value, index: 0 })}
@@ -170,21 +172,21 @@ export function OutfitBuilder() {
 
         <div className="sticky bottom-3 z-20 flex items-center justify-between gap-3 rounded-full border border-border bg-card/90 px-4 py-2 backdrop-blur">
           <span className="text-sm">
-            <span className="eyebrow mr-2">Totale</span>
+            <span className="eyebrow mr-2">{t("total")}</span>
             {formatPrice(total)}
           </span>
           <div className="flex items-center gap-2">
             <button
               onClick={downloadOutfit}
               disabled={!outfit.length || exporting}
-              aria-label="Scarica la foto dell'outfit"
+              aria-label={t("download")}
               className="flex size-9 items-center justify-center rounded-full border border-border transition-colors hover:bg-secondary disabled:opacity-40"
             >
               <Download className="size-4" />
             </button>
             <button
               onClick={surprise}
-              aria-label="Sorprendimi"
+              aria-label={t("surprise")}
               className="flex size-9 items-center justify-center rounded-full border border-border transition-colors hover:bg-secondary"
             >
               <Shuffle className="size-4" />
@@ -192,7 +194,7 @@ export function OutfitBuilder() {
             <button
               onClick={() => setFitting(true)}
               disabled={outfit.length === 0}
-              aria-label="Entra nel camerino"
+              aria-label={t("enterRoom")}
               className="relative flex size-11 items-center justify-center rounded-full bg-[var(--sand)] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.2)] ring-2 ring-primary/25 transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
             >
               <span className="absolute inset-1.5 rounded-full border border-primary/20" />
@@ -204,9 +206,7 @@ export function OutfitBuilder() {
             </button>
           </div>
         </div>
-        <p className="-mt-1 text-center text-[11px] text-muted-foreground">
-          Premi il bottone per entrare nel camerino
-        </p>
+        <p className="-mt-1 text-center text-[11px] text-muted-foreground">{t("pressToEnter")}</p>
       </div>
 
       <FittingRoom

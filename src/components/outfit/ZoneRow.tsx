@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, animate } from "motion/react";
 import { ChevronLeft, ChevronRight, Lock, LockOpen } from "lucide-react";
 import type { Item, ItemType } from "@/lib/catalog";
+import { useI18n } from "@/lib/i18n";
 import { GarmentImage } from "./GarmentImage";
 
 const SPRING = { type: "spring" as const, stiffness: 320, damping: 34, mass: 0.7 };
@@ -35,6 +36,7 @@ export function ZoneRow({
   onOpenItem: (item: Item) => void;
   displayHeight: number;
 }) {
+  const { t, typeLabel } = useI18n();
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(320);
   const x = useMotionValue(0);
@@ -79,12 +81,12 @@ export function ZoneRow({
             value={selectedType}
             onChange={(e) => onSelectType(e.target.value)}
             className="rounded-full border border-border bg-card px-3 py-1 text-xs tracking-wide text-foreground outline-none focus:ring-1 focus:ring-ring"
-            aria-label={`Tipo ${label}`}
+            aria-label={`${t("type")} ${label}`}
           >
             <option value="all">{allLabel}</option>
-            {types.map((t) => (
-              <option key={t.key} value={t.key}>
-                {t.label}
+            {types.map((type) => (
+              <option key={type.key} value={type.key}>
+                {typeLabel(type.key, type.label)}
               </option>
             ))}
             <option value="none">{noneLabel}</option>
@@ -94,7 +96,7 @@ export function ZoneRow({
           <button
             type="button"
             onClick={() => step(-1)}
-            aria-label="Precedente"
+            aria-label={t("previous")}
             className="hidden size-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary sm:flex"
           >
             <ChevronLeft className="size-4" />
@@ -102,7 +104,7 @@ export function ZoneRow({
           <button
             type="button"
             onClick={() => step(1)}
-            aria-label="Successivo"
+            aria-label={t("next")}
             className="hidden size-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary sm:flex"
           >
             <ChevronRight className="size-4" />
@@ -111,7 +113,7 @@ export function ZoneRow({
             type="button"
             onClick={onToggleLock}
             aria-pressed={locked}
-            aria-label={locked ? "Sblocca" : "Blocca"}
+            aria-label={locked ? t("unlock") : t("lock")}
             className={`flex size-7 items-center justify-center rounded-full transition-colors ${
               locked ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
             }`}
