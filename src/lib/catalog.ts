@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export const PX_PER_CM = 3.1;
+export const PX_PER_CM = 1.9;
 
 export type Zone = {
   id: string;
