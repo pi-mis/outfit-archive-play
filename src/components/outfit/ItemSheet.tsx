@@ -43,7 +43,7 @@ export function ItemSheet({ item, onClose }: { item: Item | null; onClose: () =>
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-foreground/25 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[60] bg-foreground/25 backdrop-blur-[2px]"
           />
           <motion.aside
             key={item.id}
@@ -51,7 +51,7 @@ export function ItemSheet({ item, onClose }: { item: Item | null; onClose: () =>
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={SPRING}
-            className="fixed inset-x-0 bottom-0 z-50 max-h-[88vh] overflow-y-auto rounded-t-2xl border border-border bg-card p-6 sm:inset-y-0 sm:right-0 sm:left-auto sm:max-h-none sm:w-[420px] sm:rounded-none sm:rounded-l-2xl"
+            className="fixed inset-x-0 bottom-0 z-[70] max-h-[88vh] overflow-y-auto rounded-t-2xl border border-border bg-card p-6 sm:inset-y-0 sm:right-0 sm:left-auto sm:max-h-none sm:w-[420px] sm:rounded-none sm:rounded-l-2xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
