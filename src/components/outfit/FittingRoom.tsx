@@ -371,7 +371,28 @@ export function FittingRoom({
                 );
               })}
             </div>
+
+            <AnimatePresence>
+              {zoom && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.94 }}
+                  transition={{ duration: 0.18 }}
+                  className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center bg-[oklch(0.95_0.012_86)]/92 backdrop-blur-sm"
+                >
+                  <img
+                    src={zoom.processed_image_url ?? zoom.thumbnail_url ?? ""}
+                    alt={zoom.name}
+                    className="max-h-[70vh] w-auto max-w-[88vw] object-contain"
+                  />
+                  <p className="mt-3 font-display text-lg">{zoom.name}</p>
+                  <p className="text-sm text-muted-foreground">{formatPrice(Number(zoom.price))}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
 
           <div className="relative mx-auto w-full max-w-md px-4 pb-3">
             <p className="mb-2 text-center text-[11px] text-muted-foreground">
