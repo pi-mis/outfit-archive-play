@@ -6,7 +6,8 @@ const PROMPT = [
   "Isola il capo di abbigliamento fotografato e restituisci SOLO il capo ritagliato",
   "su sfondo bianco puro e uniforme (#FFFFFF), senza alcuna ombra, gradiente o riflesso sul fondo.",
   "Rimuovi sfondo, gruccia, mani, manichino, pavimento e ogni oggetto estraneo.",
-  "Il capo deve riempire il fotogramma, centrato, con un margine minimo attorno.",
+  "Inquadratura strettissima: il capo deve riempire completamente il fotogramma, perfettamente centrato,",
+  "toccando quasi i bordi in alto e in basso, senza margini o spazio bianco superfluo.",
   "Mantieni identici forma, colore, tessuto, stampe e dettagli originali: non ridisegnare,",
   "non stilizzare. Raddrizza leggermente il capo e correggi luce e bilanciamento del bianco in modo naturale.",
 ].join(" ");

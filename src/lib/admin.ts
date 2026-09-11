@@ -101,7 +101,7 @@ export async function stripWhiteBackground(dataUrl: string): Promise<Blob> {
     return await new Promise<Blob>((resolve) => canvas.toBlob((b) => resolve(b!), "image/png"));
   }
 
-  const pad = Math.round(Math.max(maxX - minX, maxY - minY) * 0.02);
+  const pad = 1;
   const sx = Math.max(0, minX - pad);
   const sy = Math.max(0, minY - pad);
   const sw = Math.min(canvas.width - sx, maxX - minX + pad * 2);
