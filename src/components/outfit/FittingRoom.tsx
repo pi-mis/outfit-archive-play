@@ -415,6 +415,14 @@ export function FittingRoom({
                 {formatPrice(total)}
               </span>
               <button
+                onClick={() => setBack((v) => !v)}
+                aria-label={back ? "Mostra il fronte" : "Gira il manichino e vedi il retro"}
+                className="flex items-center gap-2 rounded-full border border-border px-3 py-2 text-[11px] tracking-wide transition-colors hover:bg-secondary"
+              >
+                <RotateCcw className="size-4" />
+                {back ? "Fronte" : "Retro"}
+              </button>
+              <button
                 onClick={onClose}
                 aria-label="Torna alla selezione"
                 className="relative flex size-11 items-center justify-center rounded-full bg-[var(--sand)] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.2)] ring-2 ring-primary/25 transition-transform hover:scale-105 active:scale-95"
