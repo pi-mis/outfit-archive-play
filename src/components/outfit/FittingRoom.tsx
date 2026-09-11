@@ -296,10 +296,12 @@ export function FittingRoom({
               style={{ height: stage, width: Math.max(160, stage * 0.42) }}
               onPointerDown={(e) => {
                 moved.current = false;
+                start.current = { x: e.clientX, y: e.clientY };
                 pressed.current = itemAt(e.clientX, e.clientY);
                 if (timer.current) clearTimeout(timer.current);
                 if (pressed.current) {
-                  timer.current = setTimeout(() => setZoom(pressed.current), 280);
+                  const target = pressed.current;
+                  timer.current = setTimeout(() => setZoom(target), 260);
                 }
               }}
               onPointerMove={(e) => {
@@ -308,10 +310,14 @@ export function FittingRoom({
                   if (next && next.id !== zoom.id) setZoom(next);
                   return;
                 }
-                moved.current = true;
-                if (timer.current) {
-                  clearTimeout(timer.current);
-                  timer.current = null;
+                const dx = e.clientX - start.current.x;
+                const dy = e.clientY - start.current.y;
+                if (Math.hypot(dx, dy) > 14) {
+                  moved.current = true;
+                  if (timer.current) {
+                    clearTimeout(timer.current);
+                    timer.current = null;
+                  }
                 }
               }}
               onPointerUp={endPress}
