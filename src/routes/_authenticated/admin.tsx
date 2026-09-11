@@ -13,7 +13,7 @@ import {
   type Item,
   type ItemStatus,
 } from "@/lib/catalog";
-import { blobToDataUrl, dataUrlToBlob, shrinkImage, suggestCode, uploadPhoto } from "@/lib/admin";
+import { blobToDataUrl, shrinkImage, stripWhiteBackground, suggestCode, uploadPhoto } from "@/lib/admin";
 import { cutoutGarment } from "@/lib/imaging.functions";
 import { useServerFn } from "@tanstack/react-start";
 
@@ -146,7 +146,7 @@ function NewItemWizard({
       const small = await shrinkImage(source.file, 1200);
       const dataUrl = await blobToDataUrl(small);
       const result = await runCutout({ data: { dataUrl } });
-      const blob = await dataUrlToBlob(result.dataUrl);
+      const blob = await stripWhiteBackground(result.dataUrl);
       if (cutout) URL.revokeObjectURL(cutout.preview);
       setCutout({ blob, preview: URL.createObjectURL(blob) });
       toast.success("Capo scontornato, controlla l'anteprima");
