@@ -5,10 +5,13 @@ export function GarmentImage({
   item,
   eager = false,
   className = "",
+  height,
 }: {
   item: Item;
   eager?: boolean;
   className?: string;
+  /** Altezza forzata in px (fase di scelta). Senza, si usano le proporzioni reali. */
+  height?: number;
 }) {
   return (
     <img
@@ -19,8 +22,10 @@ export function GarmentImage({
       draggable={false}
       className={`garment-shadow pointer-events-none select-none object-contain ${className}`}
       style={{
-        height: itemHeightPx(item),
-        transform: `translate(${item.offset_x}px, ${item.offset_y}px)`,
+        height: height ?? itemHeightPx(item),
+        ...(height
+          ? {}
+          : { transform: `translate(${item.offset_x}px, ${item.offset_y}px)` }),
         maxWidth: "100%",
       }}
     />
