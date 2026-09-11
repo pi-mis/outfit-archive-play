@@ -291,7 +291,33 @@ export function FittingRoom({
               ))}
             </div>
 
-            <div className="relative" style={{ height: stage, width: Math.max(160, stage * 0.42) }}>
+            <div
+              className="relative touch-none"
+              style={{ height: stage, width: Math.max(160, stage * 0.42) }}
+              onPointerDown={(e) => {
+                moved.current = false;
+                pressed.current = itemAt(e.clientX, e.clientY);
+                if (timer.current) clearTimeout(timer.current);
+                if (pressed.current) {
+                  timer.current = setTimeout(() => setZoom(pressed.current), 280);
+                }
+              }}
+              onPointerMove={(e) => {
+                if (zoom) {
+                  const next = itemAt(e.clientX, e.clientY);
+                  if (next && next.id !== zoom.id) setZoom(next);
+                  return;
+                }
+                moved.current = true;
+                if (timer.current) {
+                  clearTimeout(timer.current);
+                  timer.current = null;
+                }
+              }}
+              onPointerUp={endPress}
+              onPointerCancel={endPress}
+              onPointerLeave={endPress}
+            >
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
