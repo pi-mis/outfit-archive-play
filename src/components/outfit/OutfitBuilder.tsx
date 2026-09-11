@@ -1,16 +1,18 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Shuffle, Download } from "lucide-react";
+import { Shuffle, Download, Circle } from "lucide-react";
 import {
   fetchItems,
   fetchItemTypes,
   fetchZones,
   formatPrice,
+  zoneDisplayHeight,
   type Item,
 } from "@/lib/catalog";
 import { exportOutfit } from "@/lib/share";
 import { ZoneRow } from "./ZoneRow";
 import { ItemSheet } from "./ItemSheet";
+import { FittingRoom } from "./FittingRoom";
 
 type Selection = { type: string; index: number; locked: boolean };
 
@@ -23,6 +25,15 @@ export function OutfitBuilder() {
   const [size, setSize] = useState("all");
   const [showSold, setShowSold] = useState(false);
   const [open, setOpen] = useState<Item | null>(null);
+  const [fitting, setFitting] = useState(false);
+  const [available, setAvailable] = useState(520);
+
+  useEffect(() => {
+    const measure = () => setAvailable(Math.max(280, window.innerHeight - 545));
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   const sizes = useMemo(
     () => Array.from(new Set((items.data ?? []).map((i) => i.size).filter(Boolean) as string[])).sort(),
@@ -136,6 +147,7 @@ export function OutfitBuilder() {
               locked={selectionFor(zone.key).locked}
               onToggleLock={() => update(zone.key, { locked: !selectionFor(zone.key).locked })}
               onOpenItem={setOpen}
+              displayHeight={zoneDisplayHeight(zone.key, available, merged && zone.key === "top")}
             />
           ))}
         </div>
@@ -155,13 +167,38 @@ export function OutfitBuilder() {
             </button>
             <button
               onClick={surprise}
-              className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm tracking-wide text-primary-foreground transition-opacity hover:opacity-90"
+              aria-label="Sorprendimi"
+              className="flex size-9 items-center justify-center rounded-full border border-border transition-colors hover:bg-secondary"
             >
-              <Shuffle className="size-4" /> Sorprendimi
+              <Shuffle className="size-4" />
+            </button>
+            <button
+              onClick={() => setFitting(true)}
+              disabled={outfit.length === 0}
+              aria-label="Entra nel camerino"
+              className="relative flex size-11 items-center justify-center rounded-full bg-[var(--sand)] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.18),0_2px_6px_rgba(0,0,0,0.2)] ring-2 ring-primary/25 transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
+            >
+              <span className="absolute inset-1.5 rounded-full border border-primary/20" />
+              <span className="grid grid-cols-2 gap-1.5">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Circle key={i} className="size-1.5 fill-primary/70 text-primary/70" />
+                ))}
+              </span>
             </button>
           </div>
         </div>
+        <p className="-mt-1 text-center text-[11px] text-muted-foreground">
+          Premi il bottone per entrare nel camerino
+        </p>
       </div>
+
+      <FittingRoom
+        open={fitting}
+        onClose={() => setFitting(false)}
+        outfit={outfit}
+        zones={zones.data ?? []}
+        total={total}
+      />
 
       <ItemSheet item={open} onClose={() => setOpen(null)} />
     </>

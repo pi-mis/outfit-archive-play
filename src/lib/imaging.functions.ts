@@ -3,12 +3,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const PROMPT = [
-  "Isola il capo di abbigliamento fotografato e restituisci SOLO il capo ritagliato,",
-  "con sfondo completamente trasparente (PNG con canale alpha).",
+  "Isola il capo di abbigliamento fotografato e restituisci SOLO il capo ritagliato",
+  "su sfondo bianco puro e uniforme (#FFFFFF), senza alcuna ombra, gradiente o riflesso sul fondo.",
   "Rimuovi sfondo, gruccia, mani, manichino, pavimento e ogni oggetto estraneo.",
+  "Il capo deve riempire il fotogramma, centrato, con un margine minimo attorno.",
   "Mantieni identici forma, colore, tessuto, stampe e dettagli originali: non ridisegnare,",
-  "non stilizzare, non aggiungere ombre. Raddrizza leggermente il capo, centralo",
-  "e correggi luce e bilanciamento del bianco in modo naturale.",
+  "non stilizzare. Raddrizza leggermente il capo e correggi luce e bilanciamento del bianco in modo naturale.",
 ].join(" ");
 
 export const cutoutGarment = createServerFn({ method: "POST" })

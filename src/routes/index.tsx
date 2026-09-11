@@ -26,15 +26,12 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="px-6 py-8 text-center">
-        <h1 className="font-display text-4xl tracking-tight">{SHOP.name}</h1>
+      <header className="px-6 pb-3 pt-5 text-center">
+        <h1 className="font-display text-3xl tracking-tight">{SHOP.name}</h1>
         <p className="eyebrow mt-1">{SHOP.tagline}</p>
       </header>
 
-      <main className="flex-1 pb-10">
-        <p className="mx-auto mb-6 max-w-sm px-6 text-center text-sm text-muted-foreground">
-          Scorri ogni fascia per cambiare capo, blocca quelli che ami e premi Sorprendimi.
-        </p>
+      <main className="flex-1 pb-6">
         <OutfitBuilder />
       </main>
 

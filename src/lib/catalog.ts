@@ -70,6 +70,26 @@ export function itemHeightPx(item: Item) {
   return item.height_cm * (item.scale || 1) * PX_PER_CM;
 }
 
+/** Altezza del corpo di riferimento usata nel camerino (proporzioni reali). */
+export const BODY_HEIGHT_CM = 170;
+
+/**
+ * In fase di scelta i capi NON seguono le proporzioni reali: ogni fascia riceve
+ * una quota dell'altezza disponibile, così tutto resta leggibile in una schermata.
+ */
+export const ZONE_DISPLAY_SHARE: Record<string, number> = {
+  cappello: 0.14,
+  collana: 0.1,
+  top: 0.3,
+  bottom: 0.31,
+  scarpe: 0.15,
+};
+
+export function zoneDisplayHeight(zoneKey: string, available: number, merged = false) {
+  const share = (ZONE_DISPLAY_SHARE[zoneKey] ?? 0.2) + (merged ? (ZONE_DISPLAY_SHARE["bottom"] ?? 0) : 0);
+  return Math.round(Math.min(240, Math.max(56, available * share)));
+}
+
 export const formatPrice = (value: number) =>
   new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value);
 
