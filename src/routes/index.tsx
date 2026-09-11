@@ -1,24 +1,60 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { OutfitBuilder } from "@/components/outfit/OutfitBuilder";
+import { SHOP } from "@/lib/catalog";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Baci & Bottoni — Vintage donna a Milano" },
+      {
+        name: "description",
+        content:
+          "Compone il tuo outfit vintage pezzo per pezzo e scopri l'archivio di Baci & Bottoni, abbigliamento donna authentic pre-loved a Milano.",
+      },
+      { property: "og:title", content: "Baci & Bottoni — Vintage donna a Milano" },
+      {
+        property: "og:description",
+        content: "Gioca con l'archivio: cappelli, collane, capi e scarpe vintage da comporre come una paper doll.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="flex min-h-screen flex-col">
+      <header className="px-6 py-8 text-center">
+        <h1 className="font-display text-4xl tracking-tight">{SHOP.name}</h1>
+        <p className="eyebrow mt-1">{SHOP.tagline}</p>
+      </header>
+
+      <main className="flex-1 pb-10">
+        <p className="mx-auto mb-6 max-w-sm px-6 text-center text-sm text-muted-foreground">
+          Scorri ogni fascia per cambiare capo, blocca quelli che ami e premi Sorprendimi.
+        </p>
+        <OutfitBuilder />
+      </main>
+
+      <footer className="border-t border-border px-6 py-8 text-center text-xs leading-relaxed text-muted-foreground">
+        <p>{SHOP.address}</p>
+        <p>{SHOP.hours}</p>
+        <p className="mt-2 flex justify-center gap-4">
+          <a className="underline underline-offset-4" href={SHOP.instagram} target="_blank" rel="noreferrer">
+            Instagram
+          </a>
+          <a
+            className="underline underline-offset-4"
+            href={`https://wa.me/${SHOP.whatsapp}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            WhatsApp
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
