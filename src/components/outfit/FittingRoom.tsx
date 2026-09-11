@@ -103,8 +103,10 @@ export function FittingRoom({
                     const zone = zoneOf(item.zone_key);
                     const h = item.height_cm * (item.scale || 1) * k;
                     const anchor = zone?.anchor_y_cm ?? 0;
-                    const top =
-                      item.zone_key === "scarpe" ? stage - h : anchor * k;
+                    const top = Math.max(
+                      0,
+                      Math.min(stage - h, item.zone_key === "scarpe" ? stage - h : anchor * k),
+                    );
                     return (
                       <img
                         key={item.id}
