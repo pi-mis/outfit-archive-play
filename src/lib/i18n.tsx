@@ -136,7 +136,23 @@ type Ctx = {
   measureLabel: (key: string, italian: string) => string;
 };
 
-const LangContext = createContext<Ctx | null>(null);
+function buildValue(lang: Lang, setLang: (l: Lang) => void): Ctx {
+  return {
+    lang,
+    setLang,
+    t: (key) => DICT[key as string]?.[lang] ?? (key as string),
+    zoneLabel: (key, italian) => (lang === "it" ? italian : (ZONE_LABELS_EN[key]?.label ?? italian)),
+    zoneAll: (key, italian) => (lang === "it" ? italian : (ZONE_LABELS_EN[key]?.all ?? italian)),
+    zoneNone: (key, italian) => (lang === "it" ? italian : (ZONE_LABELS_EN[key]?.none ?? italian)),
+    typeLabel: (key, italian) => (lang === "it" ? italian : (TYPE_LABELS_EN[key] ?? italian)),
+    statusLabel: (value) => (lang === "it" ? value : (STATUS_EN[value] ?? value)),
+    measureLabel: (key, italian) => (lang === "it" ? italian : (MEASURE_EN[key] ?? italian)),
+  };
+}
+
+const FALLBACK: Ctx = buildValue("it", () => {});
+
+const LangContext = createContext<Ctx>(FALLBACK);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("it");
