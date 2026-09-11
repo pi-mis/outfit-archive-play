@@ -25,6 +25,15 @@ export function OutfitBuilder() {
   const [size, setSize] = useState("all");
   const [showSold, setShowSold] = useState(false);
   const [open, setOpen] = useState<Item | null>(null);
+  const [fitting, setFitting] = useState(false);
+  const [available, setAvailable] = useState(520);
+
+  useEffect(() => {
+    const measure = () => setAvailable(Math.max(340, window.innerHeight - 300));
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   const sizes = useMemo(
     () => Array.from(new Set((items.data ?? []).map((i) => i.size).filter(Boolean) as string[])).sort(),
@@ -138,6 +147,7 @@ export function OutfitBuilder() {
               locked={selectionFor(zone.key).locked}
               onToggleLock={() => update(zone.key, { locked: !selectionFor(zone.key).locked })}
               onOpenItem={setOpen}
+              displayHeight={zoneDisplayHeight(zone.key, available, merged && zone.key === "top")}
             />
           ))}
         </div>
