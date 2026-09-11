@@ -29,7 +29,7 @@ export function OutfitBuilder() {
   const [available, setAvailable] = useState(520);
 
   useEffect(() => {
-    const measure = () => setAvailable(Math.max(300, window.innerHeight - 330));
+    const measure = () => setAvailable(Math.max(280, window.innerHeight - 545));
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
