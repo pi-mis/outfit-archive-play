@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Circle, X } from "lucide-react";
 import type { Item, Zone } from "@/lib/catalog";
@@ -187,14 +187,42 @@ export function FittingRoom({
   outfit,
   zones,
   total,
+  onOpenItem,
 }: {
   open: boolean;
   onClose: () => void;
   outfit: Item[];
   zones: Zone[];
   total: number;
+  onOpenItem?: (item: Item) => void;
 }) {
   const [stage, setStage] = useState(520);
+  const [zoom, setZoom] = useState<Item | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pressed = useRef<Item | null>(null);
+  const moved = useRef(false);
+
+  const itemAt = (x: number, y: number): Item | null => {
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    const id = el?.dataset?.["itemId"];
+    return id ? (outfit.find((i) => i.id === id) ?? null) : null;
+  };
+
+  const endPress = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+    if (!zoom && !moved.current && pressed.current) onOpenItem?.(pressed.current);
+    pressed.current = null;
+    setZoom(null);
+  };
+
+  useEffect(() => {
+    if (!open) {
+      setZoom(null);
+      pressed.current = null;
+      if (timer.current) clearTimeout(timer.current);
+    }
+  }, [open]);
 
   useEffect(() => {
     const measure = () => setStage(Math.max(300, Math.min(600, window.innerHeight - 250)));
