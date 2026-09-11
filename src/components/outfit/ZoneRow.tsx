@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, animate } from "motion/react";
 import { ChevronLeft, ChevronRight, Lock, LockOpen } from "lucide-react";
 import type { Item, ItemType } from "@/lib/catalog";
-import { itemHeightPx } from "@/lib/catalog";
 import { GarmentImage } from "./GarmentImage";
 
 const SPRING = { type: "spring" as const, stiffness: 320, damping: 34, mass: 0.7 };
@@ -20,6 +19,7 @@ export function ZoneRow({
   locked,
   onToggleLock,
   onOpenItem,
+  displayHeight,
 }: {
   label: string;
   allLabel: string;
@@ -33,6 +33,7 @@ export function ZoneRow({
   locked: boolean;
   onToggleLock: () => void;
   onOpenItem: (item: Item) => void;
+  displayHeight: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(320);
@@ -56,7 +57,7 @@ export function ZoneRow({
     return () => controls.stop();
   }, [target, x]);
 
-  const rowHeight = empty || !current ? 0 : itemHeightPx(current) + 12;
+  const rowHeight = empty || !current ? 0 : displayHeight + 12;
 
   const step = (delta: number) => {
     if (!items.length) return;
@@ -145,7 +146,7 @@ export function ZoneRow({
                     transition={SPRING}
                     className="flex items-end justify-center"
                   >
-                    {near ? <GarmentImage item={item} eager /> : <GarmentImage item={item} />}
+                    <GarmentImage item={item} eager={near} height={displayHeight} />
                   </motion.button>
                 </div>
               );
