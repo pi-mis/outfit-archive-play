@@ -51,35 +51,97 @@ function Mannequin({ height }: { height: number }) {
   );
 }
 
-/** Specchi vintage appesi alla parete, di forme e dimensioni diverse. */
+/** Sagome degli specchi vintage: barocco, goccia, ovale intagliato, esagono, ovale dorato. */
+const MIRROR_SHAPES = {
+  barocco:
+    "M50 2c9 6 15 4 21 10 7 7 3 14 8 20 6 7 15 9 15 22 0 10-8 14-8 24 0 11 6 14 6 24 0 12-9 16-13 24-4 8-2 16-9 21-7 5-14 1-20 5-6 4-9 10-16 6-7-4-7-11-13-15-6-4-14-2-18-9-4-7 0-14-3-21-3-7-10-10-10-20 0-10 7-13 7-23 0-10-6-14-3-23 3-9 12-9 17-16 5-7 3-15 11-20 8-5 17 0 28-9Z",
+  goccia:
+    "M50 2c16 0 30 18 34 42 4 24-4 46-16 56-8 7-28 7-36 0C20 90 12 68 16 44 20 20 34 2 50 2Z",
+  ovaleIntagliato:
+    "M50 2c6 4 10 2 14 6 5 5 2 9 7 12 6 3 12 4 15 12 4 9 2 20 2 32s2 23-2 32c-3 8-9 9-15 12-5 3-2 7-7 12-4 4-8 2-14 6-6-4-10-2-14-6-5-5-2-9-7-12-6-3-12-4-15-12-4-9-2-20-2-32s-2-23 2-32c3-8 9-9 15-12 5-3 2-7 7-12 4-4 8-2 14-6Z",
+  esagono: "M50 2 96 27v46L50 98 4 73V27Z",
+  ovale: "M50 2c22 0 38 21 38 48S72 98 50 98 12 77 12 50 28 2 50 2Z",
+} as const;
+
 function WallMirror({
   className,
   shape,
+  tone = "oro",
 }: {
   className: string;
-  shape: "arco" | "ovale" | "tondo" | "rettangolo";
+  shape: keyof typeof MIRROR_SHAPES;
+  tone?: "oro" | "bronzo";
 }) {
-  const radius =
-    shape === "arco"
-      ? "999px 999px 14px 14px"
-      : shape === "ovale"
-        ? "50%"
-        : shape === "tondo"
-          ? "50%"
-          : "10px";
+  const frame = tone === "oro" ? "oklch(0.74 0.09 78)" : "oklch(0.42 0.05 52)";
+  const frameLight = tone === "oro" ? "oklch(0.9 0.08 90)" : "oklch(0.6 0.05 56)";
+  const id = `${shape}-${tone}`;
   return (
-    <div
-      className={`pointer-events-none absolute ${className}`}
-      style={{
-        borderRadius: radius,
-        border: "7px solid oklch(0.72 0.06 76)",
-        background:
-          "linear-gradient(150deg, oklch(0.97 0.008 88) 0%, oklch(0.9 0.016 82) 38%, oklch(0.95 0.01 86) 52%, oklch(0.87 0.02 78) 100%)",
-        boxShadow:
-          "0 18px 30px -18px rgba(70,50,35,0.55), inset 0 0 22px rgba(255,255,255,0.7)",
-      }}
-      aria-hidden
-    />
+    <div className={`pointer-events-none absolute ${className}`} aria-hidden>
+      <svg viewBox="0 0 100 100" className="size-full overflow-visible" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id={`f-${id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor={frameLight} />
+            <stop offset="45%" stopColor={frame} />
+            <stop offset="100%" stopColor={frameLight} />
+          </linearGradient>
+          <linearGradient id={`g-${id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="oklch(0.97 0.008 88)" />
+            <stop offset="40%" stopColor="oklch(0.89 0.016 82)" />
+            <stop offset="55%" stopColor="oklch(0.96 0.01 86)" />
+            <stop offset="100%" stopColor="oklch(0.86 0.02 78)" />
+          </linearGradient>
+        </defs>
+        <path
+          d={MIRROR_SHAPES[shape]}
+          fill={`url(#g-${id})`}
+          stroke={`url(#f-${id})`}
+          strokeWidth={7}
+          strokeLinejoin="round"
+          style={{ filter: "drop-shadow(0 12px 18px rgba(70,50,35,0.4))" }}
+        />
+      </svg>
+    </div>
+  );
+}
+
+/** Macchina da cucire vintage appoggiata su un tavolino di legno. */
+function SewingMachine({ className }: { className: string }) {
+  return (
+    <div className={`pointer-events-none absolute ${className}`} aria-hidden>
+      <svg viewBox="0 0 140 120" className="size-full">
+        <defs>
+          <linearGradient id="sm-body" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="oklch(0.42 0.03 60)" />
+            <stop offset="100%" stopColor="oklch(0.24 0.02 50)" />
+          </linearGradient>
+          <linearGradient id="sm-wood" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="oklch(0.6 0.06 62)" />
+            <stop offset="100%" stopColor="oklch(0.45 0.05 55)" />
+          </linearGradient>
+        </defs>
+        {/* tavolino */}
+        <rect x="4" y="86" width="132" height="10" rx="3" fill="url(#sm-wood)" />
+        <rect x="14" y="96" width="8" height="24" fill="oklch(0.45 0.05 55)" />
+        <rect x="118" y="96" width="8" height="24" fill="oklch(0.45 0.05 55)" />
+        {/* base macchina */}
+        <rect x="16" y="74" width="108" height="12" rx="4" fill="url(#sm-body)" />
+        {/* braccio */}
+        <path
+          d="M28 74V44c0-11 8-19 19-19h44c11 0 19 8 19 19v12c0 6-5 10-11 10h-8c-5 0-8 3-8 8v0h-9V44H55v30Z"
+          fill="url(#sm-body)"
+        />
+        {/* ago */}
+        <rect x="85" y="66" width="3" height="9" fill="oklch(0.85 0.02 90)" />
+        {/* volantino */}
+        <circle cx="112" cy="52" r="11" fill="oklch(0.3 0.02 50)" />
+        <circle cx="112" cy="52" r="4" fill="oklch(0.74 0.09 78)" />
+        {/* rocchetto di filo */}
+        <rect x="50" y="18" width="4" height="10" fill="oklch(0.74 0.09 78)" />
+        <ellipse cx="52" cy="16" rx="7" ry="4" fill="oklch(0.62 0.12 28)" />
+        {/* decorazione dorata */}
+        <path d="M40 60h34" stroke="oklch(0.74 0.09 78)" strokeWidth="1.5" fill="none" />
+      </svg>
+    </div>
   );
 }
 
