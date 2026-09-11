@@ -86,7 +86,7 @@ export const SHOP = {
   tagline: "Authentic pre-loved",
   address: "Via San Siro 7, Milano",
   hours: "Mar 10:30–19:00 · Mer–Sab 10:30–13:00 e 15:30–19:00",
-  instagram: "https://instagram.com/bacibottoni",
-  instagramHandle: "@bacibottoni",
-  whatsapp: "393450000000",
+  instagram: "https://www.instagram.com/baci_e_bottoni/",
+  instagramHandle: "@baci_e_bottoni",
+  whatsapp: "393482890994",
 };

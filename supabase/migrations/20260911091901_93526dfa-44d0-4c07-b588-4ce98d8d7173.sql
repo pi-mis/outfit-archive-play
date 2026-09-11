@@ -1,0 +1,1 @@
+CREATE POLICY "garments bucket visible" ON storage.buckets FOR SELECT TO anon, authenticated USING (id = 'garments');
