@@ -299,9 +299,11 @@ export function FittingRoom({
               ))}
             </div>
 
-            <div
+            <motion.div
               className="relative touch-none"
-              style={{ height: stage, width: Math.max(160, stage * 0.42) }}
+              animate={{ rotateY: back ? 180 : 0 }}
+              transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+              style={{ height: stage, width: Math.max(160, stage * 0.42), transformStyle: "preserve-3d" }}
               onPointerDown={(e) => {
                 moved.current = false;
                 start.current = { x: e.clientX, y: e.clientY };
