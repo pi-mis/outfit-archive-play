@@ -13,7 +13,9 @@ import {
   type Item,
   type ItemStatus,
 } from "@/lib/catalog";
-import { shrinkImage, suggestCode, uploadPhoto } from "@/lib/admin";
+import { blobToDataUrl, dataUrlToBlob, shrinkImage, suggestCode, uploadPhoto } from "@/lib/admin";
+import { cutoutGarment } from "@/lib/imaging.functions";
+import { useServerFn } from "@tanstack/react-start";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -132,12 +134,36 @@ function NewItemWizard({
     notes: "",
   });
   const [measures, setMeasures] = useState<Record<string, string>>({});
+  const [cutout, setCutout] = useState<{ blob: Blob; preview: string } | null>(null);
+  const [cutting, setCutting] = useState(false);
+  const runCutout = useServerFn(cutoutGarment);
+
+  async function makeCutout() {
+    const source = photos[mainIndex] ?? photos[0];
+    if (!source) return;
+    setCutting(true);
+    try {
+      const small = await shrinkImage(source.file, 1200);
+      const dataUrl = await blobToDataUrl(small);
+      const result = await runCutout({ data: { dataUrl } });
+      const blob = await dataUrlToBlob(result.dataUrl);
+      if (cutout) URL.revokeObjectURL(cutout.preview);
+      setCutout({ blob, preview: URL.createObjectURL(blob) });
+      toast.success("Capo scontornato, controlla l'anteprima");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Scontorno non riuscito");
+    } finally {
+      setCutting(false);
+    }
+  }
 
   const zoneTypes = useMemo(() => types.filter((t) => t.zone_key === zoneKey), [types, zoneKey]);
 
   function reset() {
     photos.forEach((p) => URL.revokeObjectURL(p.preview));
     setPhotos([]);
+    if (cutout) URL.revokeObjectURL(cutout.preview);
+    setCutout(null);
     setMainIndex(0);
     setZoneKey("");
     setTypeKey("");
@@ -174,7 +200,11 @@ function NewItemWizard({
         const { url } = await uploadPhoto(blob, code, i);
         uploaded.push(url);
       }
-      const main = uploaded[mainIndex] ?? uploaded[0] ?? null;
+      let main = uploaded[mainIndex] ?? uploaded[0] ?? null;
+      if (cutout) {
+        const { url } = await uploadPhoto(cutout.blob, code, 900, "png");
+        main = url;
+      }
 
       const cleanMeasures: Record<string, number> = {};
       for (const key of MEASURE_KEYS) {
@@ -335,6 +365,40 @@ function NewItemWizard({
                   ) : null}
                 </div>
               ))}
+            </div>
+          ) : null}
+
+          {photos.length ? (
+            <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
+              <p className="text-sm text-muted-foreground">
+                Scontorna la foto principale: lo sfondo viene rimosso e il capo raddrizzato,
+                pronto per il gioco degli abbinamenti.
+              </p>
+              <button
+                onClick={makeCutout}
+                disabled={cutting}
+                className="w-full rounded-full bg-foreground py-3 text-sm uppercase tracking-[0.2em] text-background disabled:opacity-50"
+              >
+                {cutting ? "Elaborazione…" : cutout ? "Riprova lo scontorno" : "Scontorna con AI"}
+              </button>
+              {cutout ? (
+                <div className="flex items-center gap-4">
+                  <img
+                    src={cutout.preview}
+                    alt="Capo scontornato"
+                    className="h-32 w-24 rounded-xl bg-secondary object-contain p-1"
+                  />
+                  <button
+                    onClick={() => {
+                      URL.revokeObjectURL(cutout.preview);
+                      setCutout(null);
+                    }}
+                    className="text-xs uppercase tracking-[0.18em] text-muted-foreground underline"
+                  >
+                    Usa la foto originale
+                  </button>
+                </div>
+              ) : null}
             </div>
           ) : null}
 
