@@ -84,8 +84,8 @@ export const MEASURE_LABELS: Record<string, string> = {
 export const SHOP = {
   name: "Baci & Bottoni",
   tagline: "Authentic pre-loved",
-  address: "Via della Spiga 14, Milano",
-  hours: "Mar–Sab 10:30–19:00 · Lun 15:00–19:00",
+  address: "Via San Siro 7, Milano",
+  hours: "Mar 10:30–19:00 · Mer–Sab 10:30–13:00 e 15:30–19:00",
   instagram: "https://instagram.com/bacibottoni",
   instagramHandle: "@bacibottoni",
   whatsapp: "393450000000",
