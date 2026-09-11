@@ -173,8 +173,11 @@ export function FittingRoom({
 
               {sorted.map((item, i) => {
                 const zone = zoneOf(item.zone_key);
-                const h = item.height_cm * (item.scale || 1) * k;
                 const anchor = zone?.anchor_y_cm ?? 0;
+                const h = Math.min(
+                  item.height_cm * (item.scale || 1) * k,
+                  Math.max(24, stage - anchor * k),
+                );
                 const top = item.zone_key === "scarpe" ? stage - h : anchor * k;
                 return (
                   <motion.img
