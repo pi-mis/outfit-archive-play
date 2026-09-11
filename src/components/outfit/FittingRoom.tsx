@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Circle, X } from "lucide-react";
+import { Circle, RotateCcw, X } from "lucide-react";
 import type { Item, Zone } from "@/lib/catalog";
 import { BODY_HEIGHT_CM, fittingHeightCm, formatPrice } from "@/lib/catalog";
 
