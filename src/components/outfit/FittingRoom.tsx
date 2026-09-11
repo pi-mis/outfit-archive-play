@@ -339,7 +339,7 @@ export function FittingRoom({
                 const anchor = zone?.anchor_y_cm ?? 0;
                 const shoes = item.zone_key === "scarpe";
                 const h = Math.min(
-                  fittingHeightCm(item) * k * (shoes ? 1.45 : 1),
+                  fittingHeightCm(item) * k * (shoes ? 1.3 : 1),
                   Math.max(24, stage - anchor * k + (shoes ? 40 * k : 0)),
                 );
                 const top = shoes ? stage - h : anchor * k;
