@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { OutfitBuilder } from "@/components/outfit/OutfitBuilder";
 import { SHOP } from "@/lib/catalog";
+import { LanguageToggle, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,11 +25,15 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { t } = useI18n();
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="px-6 pb-3 pt-5 text-center">
+      <header className="relative px-6 pb-3 pt-5 text-center">
+        <div className="absolute right-4 top-4">
+          <LanguageToggle />
+        </div>
         <h1 className="font-display text-3xl tracking-tight">{SHOP.name}</h1>
-        <p className="eyebrow mt-1">{SHOP.tagline}</p>
+        <p className="eyebrow mt-1">{t("tagline")}</p>
       </header>
 
       <main className="flex-1 pb-6">
@@ -37,7 +42,7 @@ function Index() {
 
       <footer className="border-t border-border px-6 py-8 text-center text-xs leading-relaxed text-muted-foreground">
         <p>{SHOP.address}</p>
-        <p>{SHOP.hours}</p>
+        <p>{t("hours")}</p>
         <p className="mt-2 flex justify-center gap-4">
           <a className="underline underline-offset-4" href={SHOP.instagram} target="_blank" rel="noreferrer">
             Instagram
