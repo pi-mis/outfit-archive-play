@@ -103,6 +103,178 @@ function AdminPage() {
 /* ------------------------------- new item ------------------------------- */
 
 type Photo = { file: File; preview: string };
+type Cutout = { blob: Blob; preview: string };
+
+type Side = {
+  photos: Photo[];
+  setPhotos: (updater: (prev: Photo[]) => Photo[]) => void;
+  mainIndex: number;
+  setMainIndex: (i: number) => void;
+  cutout: Cutout | null;
+  setCutout: (c: Cutout | null) => void;
+};
+
+function useSide(): Side {
+  const [photos, setPhotosState] = useState<Photo[]>([]);
+  const [mainIndex, setMainIndex] = useState(0);
+  const [cutout, setCutout] = useState<Cutout | null>(null);
+  return {
+    photos,
+    setPhotos: (updater) => setPhotosState((prev) => updater(prev)),
+    mainIndex,
+    setMainIndex,
+    cutout,
+    setCutout,
+  };
+}
+
+function PhotoStep({
+  side,
+  title,
+  hint,
+  optional,
+  onBack,
+  onNext,
+  nextLabel,
+}: {
+  side: Side;
+  title: string;
+  hint: string;
+  optional?: boolean;
+  onBack: () => void;
+  onNext: () => void;
+  nextLabel: string;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [cutting, setCutting] = useState(false);
+  const runCutout = useServerFn(cutoutGarment);
+
+  async function makeCutout() {
+    const source = side.photos[side.mainIndex] ?? side.photos[0];
+    if (!source) return;
+    setCutting(true);
+    try {
+      const small = await shrinkImage(source.file, 1200);
+      const dataUrl = await blobToDataUrl(small);
+      const result = await runCutout({ data: { dataUrl } });
+      const blob = await stripWhiteBackground(result.dataUrl);
+      if (side.cutout) URL.revokeObjectURL(side.cutout.preview);
+      side.setCutout({ blob, preview: URL.createObjectURL(blob) });
+      toast.success("Capo scontornato, controlla l'anteprima");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Scontorno non riuscito");
+    } finally {
+      setCutting(false);
+    }
+  }
+
+  return (
+    <section className="space-y-5">
+      <div>
+        <p className="eyebrow text-muted-foreground">{title}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{hint}</p>
+      </div>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          const list = e.target.files;
+          if (list) {
+            const next = Array.from(list).map((file) => ({ file, preview: URL.createObjectURL(file) }));
+            side.setPhotos((prev) => [...prev, ...next]);
+          }
+          e.target.value = "";
+        }}
+      />
+
+      <button
+        onClick={() => inputRef.current?.click()}
+        className="w-full rounded-2xl border border-dashed border-border bg-card py-8 text-sm uppercase tracking-[0.2em] text-muted-foreground"
+      >
+        Scatta o scegli foto
+      </button>
+
+      {side.photos.length ? (
+        <div className="grid grid-cols-3 gap-3">
+          {side.photos.map((photo, i) => (
+            <div key={photo.preview} className="relative">
+              <button onClick={() => side.setMainIndex(i)} className="block w-full">
+                <img
+                  src={photo.preview}
+                  alt={`Foto ${i + 1}`}
+                  className={`aspect-[3/4] w-full rounded-xl object-cover ${
+                    side.mainIndex === i ? "ring-2 ring-foreground" : ""
+                  }`}
+                />
+              </button>
+              <button
+                onClick={() => {
+                  URL.revokeObjectURL(photo.preview);
+                  side.setPhotos((prev) => prev.filter((_, idx) => idx !== i));
+                  side.setMainIndex(0);
+                }}
+                className="absolute right-1 top-1 rounded-full bg-background/90 px-2 py-0.5 text-xs"
+              >
+                ×
+              </button>
+              {side.mainIndex === i ? (
+                <span className="mt-1 block text-center text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">
+                  principale
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {side.photos.length ? (
+        <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
+          <p className="text-sm text-muted-foreground">
+            Scontorna la foto principale: lo sfondo viene rimosso e il capo raddrizzato,
+            pronto per il gioco degli abbinamenti.
+          </p>
+          <button
+            onClick={makeCutout}
+            disabled={cutting}
+            className="w-full rounded-full bg-foreground py-3 text-sm uppercase tracking-[0.2em] text-background disabled:opacity-50"
+          >
+            {cutting ? "Elaborazione…" : side.cutout ? "Riprova lo scontorno" : "Scontorna con AI"}
+          </button>
+          {side.cutout ? (
+            <div className="flex items-center gap-4">
+              <img
+                src={side.cutout.preview}
+                alt="Capo scontornato"
+                className="h-32 w-24 rounded-xl bg-secondary object-contain p-1"
+              />
+              <button
+                onClick={() => {
+                  if (side.cutout) URL.revokeObjectURL(side.cutout.preview);
+                  side.setCutout(null);
+                }}
+                className="text-xs uppercase tracking-[0.18em] text-muted-foreground underline"
+              >
+                Usa la foto originale
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      <StepNav
+        onBack={onBack}
+        nextLabel={nextLabel}
+        disabled={!optional && side.photos.length === 0}
+        onNext={onNext}
+      />
+    </section>
+  );
+}
 
 function NewItemWizard({
   zones,
@@ -112,13 +284,13 @@ function NewItemWizard({
   types: { key: string; label: string; zone_key: string }[];
 }) {
   const queryClient = useQueryClient();
-  const inputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(0);
   const [zoneKey, setZoneKey] = useState("");
   const [typeKey, setTypeKey] = useState("");
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [mainIndex, setMainIndex] = useState(0);
   const [saving, setSaving] = useState(false);
+
+  const front = useSide();
+  const back = useSide();
 
   const [form, setForm] = useState({
     code: "",
@@ -134,37 +306,20 @@ function NewItemWizard({
     notes: "",
   });
   const [measures, setMeasures] = useState<Record<string, string>>({});
-  const [cutout, setCutout] = useState<{ blob: Blob; preview: string } | null>(null);
-  const [cutting, setCutting] = useState(false);
-  const runCutout = useServerFn(cutoutGarment);
-
-  async function makeCutout() {
-    const source = photos[mainIndex] ?? photos[0];
-    if (!source) return;
-    setCutting(true);
-    try {
-      const small = await shrinkImage(source.file, 1200);
-      const dataUrl = await blobToDataUrl(small);
-      const result = await runCutout({ data: { dataUrl } });
-      const blob = await stripWhiteBackground(result.dataUrl);
-      if (cutout) URL.revokeObjectURL(cutout.preview);
-      setCutout({ blob, preview: URL.createObjectURL(blob) });
-      toast.success("Capo scontornato, controlla l'anteprima");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Scontorno non riuscito");
-    } finally {
-      setCutting(false);
-    }
-  }
 
   const zoneTypes = useMemo(() => types.filter((t) => t.zone_key === zoneKey), [types, zoneKey]);
 
+  function resetSide(side: Side) {
+    side.photos.forEach((p) => URL.revokeObjectURL(p.preview));
+    side.setPhotos(() => []);
+    if (side.cutout) URL.revokeObjectURL(side.cutout.preview);
+    side.setCutout(null);
+    side.setMainIndex(0);
+  }
+
   function reset() {
-    photos.forEach((p) => URL.revokeObjectURL(p.preview));
-    setPhotos([]);
-    if (cutout) URL.revokeObjectURL(cutout.preview);
-    setCutout(null);
-    setMainIndex(0);
+    resetSide(front);
+    resetSide(back);
     setZoneKey("");
     setTypeKey("");
     setStep(0);
@@ -184,27 +339,27 @@ function NewItemWizard({
     });
   }
 
-  function addFiles(list: FileList | null) {
-    if (!list) return;
-    const next = Array.from(list).map((file) => ({ file, preview: URL.createObjectURL(file) }));
-    setPhotos((prev) => [...prev, ...next]);
+  async function uploadSide(side: Side, code: string, offset: number) {
+    const uploaded: string[] = [];
+    for (let i = 0; i < side.photos.length; i++) {
+      const blob = await shrinkImage(side.photos[i]!.file);
+      const { url } = await uploadPhoto(blob, code, offset + i);
+      uploaded.push(url);
+    }
+    let main = uploaded[side.mainIndex] ?? uploaded[0] ?? null;
+    if (side.cutout) {
+      const { url } = await uploadPhoto(side.cutout.blob, code, offset + 900, "png");
+      main = url;
+    }
+    return { uploaded, main };
   }
 
   async function save() {
     setSaving(true);
     try {
       const code = form.code.trim() || suggestCode(typeKey);
-      const uploaded: string[] = [];
-      for (let i = 0; i < photos.length; i++) {
-        const blob = await shrinkImage(photos[i]!.file);
-        const { url } = await uploadPhoto(blob, code, i);
-        uploaded.push(url);
-      }
-      let main = uploaded[mainIndex] ?? uploaded[0] ?? null;
-      if (cutout) {
-        const { url } = await uploadPhoto(cutout.blob, code, 900, "png");
-        main = url;
-      }
+      const frontUpload = await uploadSide(front, code, 0);
+      const backUpload = await uploadSide(back, code, 100);
 
       const cleanMeasures: Record<string, number> = {};
       for (const key of MEASURE_KEYS) {
@@ -225,9 +380,11 @@ function NewItemWizard({
         flaws: form.flaws.trim() || null,
         price: Number(form.price) || 0,
         status: form.status,
-        original_photos: uploaded,
-        processed_image_url: main,
-        thumbnail_url: main,
+        original_photos: frontUpload.uploaded,
+        back_original_photos: backUpload.uploaded,
+        processed_image_url: frontUpload.main,
+        back_image_url: backUpload.main,
+        thumbnail_url: frontUpload.main,
         height_cm: Number(form.height_cm) || 60,
         notes: form.notes.trim() || null,
       });
@@ -246,7 +403,7 @@ function NewItemWizard({
   return (
     <div className="space-y-6">
       <ol className="flex gap-2 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
-        {["Categoria", "Foto", "Dettagli"].map((label, i) => (
+        {["Categoria", "Fronte", "Retro", "Dettagli"].map((label, i) => (
           <li
             key={label}
             className={`flex-1 border-t-2 pt-2 ${i <= step ? "border-foreground text-foreground" : "border-border"}`}
@@ -300,118 +457,34 @@ function NewItemWizard({
             </div>
           ) : null}
 
-          <StepNav
-            nextLabel="Passa alle foto"
-            disabled={!zoneKey || !typeKey}
-            onNext={() => setStep(1)}
-          />
+          <StepNav nextLabel="Passa alle foto" disabled={!zoneKey || !typeKey} onNext={() => setStep(1)} />
         </section>
       ) : null}
 
       {step === 1 ? (
-        <section className="space-y-5">
-          <p className="text-sm text-muted-foreground">
-            Appendi il capo su fondo chiaro e uniforme, inquadralo intero e tieni il telefono dritto.
-            Scatta una foto frontale, una del retro e un dettaglio di tessuto o etichetta.
-          </p>
-
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            multiple
-            className="hidden"
-            onChange={(e) => {
-              addFiles(e.target.files);
-              e.target.value = "";
-            }}
-          />
-
-          <button
-            onClick={() => inputRef.current?.click()}
-            className="w-full rounded-2xl border border-dashed border-border bg-card py-8 text-sm uppercase tracking-[0.2em] text-muted-foreground"
-          >
-            Scatta o scegli foto
-          </button>
-
-          {photos.length ? (
-            <div className="grid grid-cols-3 gap-3">
-              {photos.map((photo, i) => (
-                <div key={photo.preview} className="relative">
-                  <button onClick={() => setMainIndex(i)} className="block w-full">
-                    <img
-                      src={photo.preview}
-                      alt={`Foto ${i + 1}`}
-                      className={`aspect-[3/4] w-full rounded-xl object-cover ${
-                        mainIndex === i ? "ring-2 ring-foreground" : ""
-                      }`}
-                    />
-                  </button>
-                  <button
-                    onClick={() => {
-                      URL.revokeObjectURL(photo.preview);
-                      setPhotos((prev) => prev.filter((_, idx) => idx !== i));
-                      setMainIndex(0);
-                    }}
-                    className="absolute right-1 top-1 rounded-full bg-background/90 px-2 py-0.5 text-xs"
-                  >
-                    ×
-                  </button>
-                  {mainIndex === i ? (
-                    <span className="mt-1 block text-center text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">
-                      principale
-                    </span>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          ) : null}
-
-          {photos.length ? (
-            <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
-              <p className="text-sm text-muted-foreground">
-                Scontorna la foto principale: lo sfondo viene rimosso e il capo raddrizzato,
-                pronto per il gioco degli abbinamenti.
-              </p>
-              <button
-                onClick={makeCutout}
-                disabled={cutting}
-                className="w-full rounded-full bg-foreground py-3 text-sm uppercase tracking-[0.2em] text-background disabled:opacity-50"
-              >
-                {cutting ? "Elaborazione…" : cutout ? "Riprova lo scontorno" : "Scontorna con AI"}
-              </button>
-              {cutout ? (
-                <div className="flex items-center gap-4">
-                  <img
-                    src={cutout.preview}
-                    alt="Capo scontornato"
-                    className="h-32 w-24 rounded-xl bg-secondary object-contain p-1"
-                  />
-                  <button
-                    onClick={() => {
-                      URL.revokeObjectURL(cutout.preview);
-                      setCutout(null);
-                    }}
-                    className="text-xs uppercase tracking-[0.18em] text-muted-foreground underline"
-                  >
-                    Usa la foto originale
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          <StepNav
-            onBack={() => setStep(0)}
-            nextLabel="Aggiungi i dettagli"
-            disabled={photos.length === 0}
-            onNext={() => setStep(2)}
-          />
-        </section>
+        <PhotoStep
+          side={front}
+          title="Foto del fronte"
+          hint="Appendi il capo su fondo chiaro e uniforme, inquadralo intero di fronte e tieni il telefono dritto. Poi scontornalo con l'AI."
+          onBack={() => setStep(0)}
+          onNext={() => setStep(2)}
+          nextLabel="Passa al retro"
+        />
       ) : null}
 
       {step === 2 ? (
+        <PhotoStep
+          side={back}
+          title="Foto del retro"
+          hint="Gira il capo e fotografa il retro nello stesso modo. Anche qui puoi scontornare con l'AI. Puoi saltare questo passaggio."
+          optional
+          onBack={() => setStep(1)}
+          onNext={() => setStep(3)}
+          nextLabel={back.photos.length ? "Aggiungi i dettagli" : "Salta e aggiungi i dettagli"}
+        />
+      ) : null}
+
+      {step === 3 ? (
         <section className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Nome del capo" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
@@ -463,7 +536,7 @@ function NewItemWizard({
           <Field label="Note interne" value={form.notes} onChange={(v) => setForm({ ...form, notes: v })} />
 
           <StepNav
-            onBack={() => setStep(1)}
+            onBack={() => setStep(2)}
             nextLabel={saving ? "Salvataggio…" : "Salva nell'archivio"}
             disabled={saving}
             onNext={save}
