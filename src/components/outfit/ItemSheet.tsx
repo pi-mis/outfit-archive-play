@@ -66,22 +66,40 @@ export function ItemSheet({ item, onClose }: { item: Item | null; onClose: () =>
               </button>
             </div>
 
-            <div className="mt-5 flex items-end justify-center rounded-lg bg-background p-6">
-              <img
-                src={item.processed_image_url ?? ""}
-                alt={item.name}
-                className="garment-shadow max-h-64 object-contain"
-              />
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <figure className="flex flex-col items-center rounded-lg bg-background p-4">
+                <img
+                  src={item.processed_image_url ?? ""}
+                  alt={`${item.name} — fronte`}
+                  className="garment-shadow max-h-56 object-contain"
+                />
+                <figcaption className="mt-2 text-[11px] tracking-widest text-muted-foreground uppercase">
+                  Fronte
+                </figcaption>
+              </figure>
+              <figure className="flex flex-col items-center rounded-lg bg-background p-4">
+                {item.back_image_url ? (
+                  <img
+                    src={item.back_image_url}
+                    alt={`${item.name} — retro`}
+                    className="garment-shadow max-h-56 object-contain"
+                  />
+                ) : (
+                  <div className="flex max-h-56 flex-1 items-center px-2 text-center text-xs text-muted-foreground">
+                    Foto del retro non disponibile
+                  </div>
+                )}
+                <figcaption className="mt-2 text-[11px] tracking-widest text-muted-foreground uppercase">
+                  Retro
+                </figcaption>
+              </figure>
             </div>
-            <p className="mt-2 text-center text-[11px] tracking-widest text-muted-foreground uppercase">
-              Immagine elaborata
-            </p>
 
-            {item.original_photos.length > 0 && (
+            {[...item.original_photos, ...(item.back_original_photos ?? [])].length > 0 && (
               <div className="mt-5">
                 <p className="eyebrow">Foto originali</p>
                 <div className="mt-2 flex gap-2 overflow-x-auto no-scrollbar">
-                  {item.original_photos.map((src) => (
+                  {[...item.original_photos, ...(item.back_original_photos ?? [])].map((src) => (
                     <img key={src} src={src} alt={`Foto originale di ${item.name}`} className="h-28 rounded-md object-cover" />
                   ))}
                 </div>
