@@ -85,6 +85,25 @@ export const ZONE_DISPLAY_SHARE: Record<string, number> = {
   scarpe: 0.15,
 };
 
+/**
+ * Nel camerino le misure devono restare realistiche: limitiamo l'altezza dichiarata
+ * di ogni capo dentro un intervallo plausibile per la sua zona (su una figura di 170 cm).
+ */
+export const ZONE_CM_RANGE: Record<string, [number, number]> = {
+  cappello: [14, 26],
+  collana: [8, 18],
+  top: [45, 95],
+  bottom: [38, 100],
+  scarpe: [14, 42],
+};
+
+export function fittingHeightCm(item: Item) {
+  const raw = item.height_cm * (item.scale || 1);
+  const [min, max] = ZONE_CM_RANGE[item.zone_key] ?? [10, 120];
+  if (!raw || Number.isNaN(raw)) return min;
+  return Math.min(max, Math.max(min, raw));
+}
+
 export function zoneDisplayHeight(zoneKey: string, available: number, merged = false) {
   const share = (ZONE_DISPLAY_SHARE[zoneKey] ?? 0.2) + (merged ? (ZONE_DISPLAY_SHARE["bottom"] ?? 0) : 0);
   return Math.round(Math.min(240, Math.max(56, available * share)));

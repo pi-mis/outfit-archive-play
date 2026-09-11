@@ -112,9 +112,9 @@
   }
 }
 
-/* One consistent, subtle soft shadow for every garment cut-out. */
+/* Nessuna ombra sui capi: il ritaglio resta pulito sullo sfondo del sito. */
 @utility garment-shadow {
-  filter: drop-shadow(0 14px 18px oklch(0.26 0.032 55 / 0.22));
+  filter: none;
 }
 
 @utility eyebrow {
