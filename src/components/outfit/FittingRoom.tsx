@@ -337,9 +337,10 @@ export function FittingRoom({
               {sorted.map((item, i) => {
                 const zone = zoneOf(item.zone_key);
                 const anchor = zone?.anchor_y_cm ?? 0;
+                const shoes = item.zone_key === "scarpe";
                 const h = Math.min(
-                  fittingHeightCm(item) * k,
-                  Math.max(24, stage - anchor * k + (item.zone_key === "scarpe" ? 30 * k : 0)),
+                  fittingHeightCm(item) * k * (shoes ? 1.45 : 1),
+                  Math.max(24, stage - anchor * k + (shoes ? 40 * k : 0)),
                 );
                 const top = item.zone_key === "scarpe" ? stage - h : anchor * k;
                 return (
