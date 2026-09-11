@@ -358,7 +358,7 @@ export function FittingRoom({
                     key={item.id}
                     data-item-id={item.id}
                     draggable={false}
-                    src={item.processed_image_url ?? item.thumbnail_url ?? ""}
+                    src={faceOf(item)}
                     alt={item.name}
                     initial={{
                       opacity: 0,
