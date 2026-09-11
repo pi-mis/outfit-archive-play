@@ -226,6 +226,7 @@ export function FittingRoom({
   useEffect(() => {
     if (!open) {
       setZoom(null);
+      setBack(false);
       pressed.current = null;
       if (timer.current) clearTimeout(timer.current);
     }
