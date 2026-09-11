@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import type { Item, Zone } from "@/lib/catalog";
-import { BODY_HEIGHT_CM, formatPrice } from "@/lib/catalog";
+import { BODY_HEIGHT_CM, fittingHeightCm, formatPrice } from "@/lib/catalog";
 
 /**
  * Manichino bianco a proporzioni reali: 170 cm mappati su 340 unità (2 unità = 1 cm).
@@ -240,8 +240,8 @@ export function FittingRoom({
                 const zone = zoneOf(item.zone_key);
                 const anchor = zone?.anchor_y_cm ?? 0;
                 const h = Math.min(
-                  item.height_cm * (item.scale || 1) * k,
-                  Math.max(24, stage - anchor * k),
+                  fittingHeightCm(item) * k,
+                  Math.max(24, stage - anchor * k + (item.zone_key === "scarpe" ? 30 * k : 0)),
                 );
                 const top = item.zone_key === "scarpe" ? stage - h : anchor * k;
                 return (
