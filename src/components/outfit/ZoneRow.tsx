@@ -127,12 +127,16 @@ export function ZoneRow({
             className="absolute inset-y-0 left-0 flex cursor-grab items-end active:cursor-grabbing"
             style={{ x }}
             drag="x"
-            dragElastic={0.12}
+            dragElastic={0.25}
             dragMomentum={false}
+            dragTransition={{ power: 0.2, timeConstant: 120 }}
             onDragEnd={(_, info) => {
-              const delta = info.offset.x < -40 || info.velocity.x < -400 ? 1 : info.offset.x > 40 || info.velocity.x > 400 ? -1 : 0;
-              step(delta);
-              animate(x, width / 2 - slide / 2 - Math.min(items.length - 1, Math.max(0, index + delta)) * slide, SPRING);
+              const projected = info.offset.x + info.velocity.x * 0.12;
+              const steps = Math.round(-projected / slide);
+              const delta = steps !== 0 ? steps : Math.abs(info.offset.x) > 14 ? (info.offset.x < 0 ? 1 : -1) : 0;
+              const next = Math.min(items.length - 1, Math.max(0, index + delta));
+              onIndexChange(next);
+              animate(x, width / 2 - slide / 2 - next * slide, SPRING);
             }}
           >
             {items.map((item, i) => {
