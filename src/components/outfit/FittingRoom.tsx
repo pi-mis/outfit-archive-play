@@ -201,6 +201,7 @@ export function FittingRoom({
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pressed = useRef<Item | null>(null);
   const moved = useRef(false);
+  const start = useRef({ x: 0, y: 0 });
 
   const itemAt = (x: number, y: number): Item | null => {
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
