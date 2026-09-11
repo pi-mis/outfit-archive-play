@@ -342,10 +342,12 @@ export function FittingRoom({
                   fittingHeightCm(item) * k * (shoes ? 1.45 : 1),
                   Math.max(24, stage - anchor * k + (shoes ? 40 * k : 0)),
                 );
-                const top = item.zone_key === "scarpe" ? stage - h : anchor * k;
+                const top = shoes ? stage - h : anchor * k;
                 return (
                   <motion.img
                     key={item.id}
+                    data-item-id={item.id}
+                    draggable={false}
                     src={item.processed_image_url ?? item.thumbnail_url ?? ""}
                     alt={item.name}
                     initial={{
