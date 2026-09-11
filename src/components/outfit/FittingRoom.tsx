@@ -396,7 +396,7 @@ export function FittingRoom({
 
           <div className="relative mx-auto w-full max-w-md px-4 pb-3">
             <p className="mb-2 text-center text-[11px] text-muted-foreground">
-              Proporzioni reali · figura di {BODY_HEIGHT_CM} cm
+              Proporzioni reali · figura di {BODY_HEIGHT_CM} cm · tocca un capo per la scheda, tieni premuto per ingrandire
             </p>
             <div className="flex items-center justify-between gap-3 rounded-full border border-border bg-card/90 px-4 py-2 backdrop-blur">
               <span className="text-sm">

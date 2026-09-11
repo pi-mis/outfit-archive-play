@@ -198,6 +198,7 @@ export function OutfitBuilder() {
         outfit={outfit}
         zones={zones.data ?? []}
         total={total}
+        onOpenItem={setOpen}
       />
 
       <ItemSheet item={open} onClose={() => setOpen(null)} />
