@@ -198,10 +198,16 @@ export function FittingRoom({
 }) {
   const [stage, setStage] = useState(520);
   const [zoom, setZoom] = useState<Item | null>(null);
+  const [back, setBack] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pressed = useRef<Item | null>(null);
   const moved = useRef(false);
   const start = useRef({ x: 0, y: 0 });
+
+  const faceOf = (item: Item) =>
+    (back ? (item.back_image_url ?? item.processed_image_url) : item.processed_image_url) ??
+    item.thumbnail_url ??
+    "";
 
   const itemAt = (x: number, y: number): Item | null => {
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
