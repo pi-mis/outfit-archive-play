@@ -393,7 +393,7 @@ export function FittingRoom({
                   className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center bg-[oklch(0.95_0.012_86)]/92 backdrop-blur-sm"
                 >
                   <img
-                    src={zoom.processed_image_url ?? zoom.thumbnail_url ?? ""}
+                    src={faceOf(zoom)}
                     alt={zoom.name}
                     className="max-h-[70vh] w-auto max-w-[88vw] object-contain"
                   />
