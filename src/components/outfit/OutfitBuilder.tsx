@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Shuffle, Download, Circle } from "lucide-react";
+import { toast } from "sonner";
 import {
   fetchItems,
   fetchItemTypes,
@@ -26,6 +27,7 @@ export function OutfitBuilder() {
   const [showSold, setShowSold] = useState(false);
   const [open, setOpen] = useState<Item | null>(null);
   const [fitting, setFitting] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [available, setAvailable] = useState(520);
 
   useEffect(() => {
@@ -104,6 +106,20 @@ export function OutfitBuilder() {
     }
   };
 
+  const downloadOutfit = async () => {
+    if (!outfit.length || exporting) return;
+    setExporting(true);
+    try {
+      await exportOutfit(outfit, zones.data ?? []);
+      toast.success("Cartolina pronta");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      toast.error("Non è stato possibile salvare la foto. Riprova.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   if (zones.isLoading || items.isLoading) {
     return <p className="py-24 text-center text-sm text-muted-foreground">Stiamo aprendo l'armadio…</p>;
   }
@@ -159,9 +175,10 @@ export function OutfitBuilder() {
           </span>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => exportOutfit(outfit, total, zones.data ?? [])}
+              onClick={downloadOutfit}
+              disabled={!outfit.length || exporting}
               aria-label="Scarica la foto dell'outfit"
-              className="flex size-9 items-center justify-center rounded-full border border-border transition-colors hover:bg-secondary"
+              className="flex size-9 items-center justify-center rounded-full border border-border transition-colors hover:bg-secondary disabled:opacity-40"
             >
               <Download className="size-4" />
             </button>
