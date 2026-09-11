@@ -334,6 +334,7 @@ export function FittingRoom({
               onPointerCancel={endPress}
               onPointerLeave={endPress}
             >
+              <div className="absolute inset-0" style={{ transform: back ? "scaleX(-1)" : undefined }}>
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
