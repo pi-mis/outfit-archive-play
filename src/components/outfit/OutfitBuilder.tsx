@@ -1,16 +1,18 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Shuffle, Download } from "lucide-react";
+import { Shuffle, Download, Circle } from "lucide-react";
 import {
   fetchItems,
   fetchItemTypes,
   fetchZones,
   formatPrice,
+  zoneDisplayHeight,
   type Item,
 } from "@/lib/catalog";
 import { exportOutfit } from "@/lib/share";
 import { ZoneRow } from "./ZoneRow";
 import { ItemSheet } from "./ItemSheet";
+import { FittingRoom } from "./FittingRoom";
 
 type Selection = { type: string; index: number; locked: boolean };
 
