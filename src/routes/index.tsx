@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Info } from "lucide-react";
 import { OutfitBuilder } from "@/components/outfit/OutfitBuilder";
 import { Intro } from "@/components/outfit/Intro";
 import { SHOP } from "@/lib/catalog";
@@ -39,6 +40,15 @@ function Index() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="relative px-6 pb-3 pt-5 text-center">
+        <button
+          type="button"
+          onClick={() => setIntro(true)}
+          aria-label={t("introHowItWorks")}
+          title={t("introHowItWorks")}
+          className="border-border bg-card text-muted-foreground hover:border-brass hover:text-brass absolute left-4 top-4 flex size-7 items-center justify-center rounded-full border transition-colors"
+        >
+          <Info className="size-3.5" strokeWidth={1.5} />
+        </button>
         <div className="absolute right-4 top-4">
           <LanguageToggle />
         </div>

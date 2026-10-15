@@ -1,8 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
-
-/** Upload a photo to the private "garments" bucket and return a long-lived signed URL. */
+/** Carica una foto nel bucket pubblico "garments" e restituisce il suo URL. */
 export async function uploadPhoto(file: Blob, code: string, index: number, ext = "jpg") {
   const path = `items/${code}/${Date.now()}-${index}.${ext}`;
   const { error } = await supabase.storage.from("garments").upload(path, file, {
@@ -10,11 +8,8 @@ export async function uploadPhoto(file: Blob, code: string, index: number, ext =
     upsert: true,
   });
   if (error) throw error;
-  const { data, error: signError } = await supabase.storage
-    .from("garments")
-    .createSignedUrl(path, TEN_YEARS);
-  if (signError) throw signError;
-  return { path, url: data.signedUrl };
+  const { data } = supabase.storage.from("garments").getPublicUrl(path);
+  return { path, url: data.publicUrl };
 }
 
 /** Downscale a captured photo before upload so mobile uploads stay fast. */

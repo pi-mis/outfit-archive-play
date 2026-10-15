@@ -28,12 +28,22 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  // La registrazione resta aperta solo finché il negozio non ha un admin.
+  const [signupOpen, setSignupOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) navigate({ to: "/admin", replace: true });
     });
   }, [navigate]);
+
+  useEffect(() => {
+    supabase.rpc("admin_exists").then(({ data, error: rpcError }) => {
+      const open = !rpcError && data === false;
+      setSignupOpen(open);
+      if (!open) setMode("login");
+    });
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -124,17 +134,19 @@ function AuthPage() {
           </button>
         </form>
 
-        <button
-          type="button"
-          onClick={() => {
-            setMode(mode === "login" ? "signup" : "login");
-            setError(null);
-            setInfo(null);
-          }}
-          className="mt-6 w-full text-center text-xs uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-4"
-        >
-          {mode === "login" ? "Primo accesso: crea l'account" : "Ho già un account"}
-        </button>
+        {signupOpen ? (
+          <button
+            type="button"
+            onClick={() => {
+              setMode(mode === "login" ? "signup" : "login");
+              setError(null);
+              setInfo(null);
+            }}
+            className="mt-6 w-full text-center text-xs uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-4"
+          >
+            {mode === "login" ? "Primo accesso: crea l'account" : "Ho già un account"}
+          </button>
+        ) : null}
 
         <a
           href="/"

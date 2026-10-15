@@ -47,7 +47,6 @@ export type Item = {
   scale: number;
   offset_x: number;
   offset_y: number;
-  notes: string | null;
 };
 
 export async function fetchZones(): Promise<Zone[]> {
@@ -62,8 +61,12 @@ export async function fetchItemTypes(): Promise<ItemType[]> {
   return (data ?? []) as ItemType[];
 }
 
+/** Le note interne restano fuori: non sono leggibili dal ruolo anonimo. */
+const ITEM_COLUMNS =
+  "id, code, zone_key, type_key, name, era, brand, size, measurements, condition, flaws, price, status, original_photos, back_original_photos, processed_image_url, back_image_url, thumbnail_url, height_cm, scale, offset_x, offset_y";
+
 export async function fetchItems(): Promise<Item[]> {
-  const { data, error } = await supabase.from("items").select("*").order("created_at");
+  const { data, error } = await supabase.from("items").select(ITEM_COLUMNS).order("created_at");
   if (error) throw error;
   return (data ?? []) as unknown as Item[];
 }
