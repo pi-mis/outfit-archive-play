@@ -77,41 +77,43 @@ const DICT: Dict = {
   introHowItWorks: { it: "Come funziona", en: "How it works" },
   introSkip: { it: "Salta", en: "Skip" },
   introNext: { it: "Avanti", en: "Next" },
-  introStart: { it: "Inizia a vestire", en: "Start dressing" },
+  introStart: { it: "Entra nel guardaroba", en: "Enter the wardrobe" },
   introEyebrow1: { it: "Benvenuta", en: "Welcome" },
   introTitle1: {
-    it: "Qui non si compra: si gioca a vestirsi",
-    en: "You don't shop here: you play dress-up",
+    it: "Il guardaroba è aperto, e nessuno ti guarda provare",
+    en: "The wardrobe is open, and nobody is watching you try",
   },
   introBody1: {
-    it: "Cinque fasce — cappello, collana, capo, pantaloni, scarpe — e dentro c'è tutto l'archivio del negozio. Scorri con il dito e componi il tuo outfit, come una paper doll cresciuta bene.",
-    en: "Five bands — hat, necklace, top, bottom, shoes — holding the shop's whole archive. Swipe with a finger and build your outfit, like a paper doll that grew up well.",
+    it: "Cappello, collana, capo, pantaloni, scarpe: cinque ripiani da combinare con un dito. Accosta quello che non avresti mai accostato — qui l'azzardo non si paga.",
+    en: "Hat, necklace, top, trousers, shoes: five shelves to combine with one finger. Put together what you would never have put together — here, daring costs nothing.",
   },
   introEyebrow2: { it: "Come funziona", en: "How it works" },
   introTitle2: {
-    it: "Un dito, un lucchetto, un pulsante magico",
-    en: "One finger, one padlock, one magic button",
+    it: "Scorri, chiudi il lucchetto, lascia che sia il caso a vestirti",
+    en: "Swipe, close the padlock, let chance dress you",
   },
   introBody2: {
-    it: "Scegli il tipo dal menù e scorri per cambiare capo. Il lucchetto tiene fermo quello che ami, «Sorprendimi» pensa per te quando le idee finiscono. Tocca un capo per taglia, misure e prezzo.",
-    en: "Pick a type from the menu and swipe to change piece. The padlock holds what you love, “Surprise me” thinks for you when ideas run dry. Tap a piece for size, measurements and price.",
+    it: "Il menù sceglie il tipo, il dito cambia il capo, il lucchetto difende quello su cui hai già deciso. «Sorprendimi» ha opinioni forti e gusto incostante. Tocca un capo per taglia, misure e prezzo.",
+    en: "The menu picks the type, your finger changes the piece, the padlock defends what you have already settled on. “Surprise me” holds strong opinions and uneven taste. Tap a piece for size, measurements and price.",
   },
   introEyebrow3: { it: "Perché è diverso", en: "Why it's different" },
-  introTitle3: { it: "Ogni capo esiste una volta sola", en: "Every piece exists only once" },
-  introBody3: {
-    it: "Niente griglie con quattrocento magliette identiche: qui ogni pezzo è l'unico esemplare rimasto in circolazione. Per questo lo trovi su un manichino e non in una lista — e nel camerino lo vedi nelle proporzioni vere.",
-    en: "No grid of four hundred identical t-shirts: here each piece is the only one left in circulation. That's why it sits on a mannequin instead of in a list — and in the fitting room you see it in real proportions.",
+  introTitle3: {
+    it: "Un solo esemplare, nessuna seconda taglia",
+    en: "One of each, and no second size",
   },
-  introEyebrow4: { it: "In cosa crediamo", en: "What we believe in" },
+  introBody3: {
+    it: "Niente scaffali con quattrocento magliette uguali: ogni pezzo qui è sopravvissuto a qualche decennio e a più di un trasloco, ed è rimasto uno. Per questo lo vedi su un manichino, nelle sue proporzioni vere.",
+    en: "No shelf of four hundred identical t-shirts: every piece here has survived a few decades and more than one move, and only one is left. That is why you see it on a mannequin, in its true proportions.",
+  },
+  introEyebrow4: { it: "In cosa crediamo", en: "What we believe" },
   introTitle4: {
-    it: "La moda più sostenibile è quella che esiste già",
-    en: "The most sustainable fashion already exists",
+    it: "Il lusso migliore non si fabbrica: si ritrova",
+    en: "The finest luxury isn't manufactured: it's found again",
   },
   introBody4: {
-    it: "Capi scelti uno per uno, misure reali e difetti dichiarati: nessuna sorpresa all'arrivo. Scegli qui e vieni a provarlo in negozio.",
-    en: "Pieces chosen one by one, real measurements and flaws declared up front: no surprises. Choose here, then come and try it on in the shop.",
-  },
-};
+    it: "Capi scelti a mano, misure prese davvero, difetti dichiarati con la stessa cura dei pregi. Scegli qui con calma, poi passa a provarli: certe stoffe vanno toccate.",
+    en: "Pieces chosen by hand, measurements actually taken, flaws declared with the same care as the merits. Choose here at your own pace, then come and try them on: some fabrics have to be touched.",
+  }};
 
 const ZONE_LABELS_EN: Record<string, { label: string; all: string; none: string }> = {
   cappello: { label: "Hat", all: "All", none: "None" },
