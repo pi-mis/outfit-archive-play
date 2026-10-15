@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { OutfitBuilder } from "@/components/outfit/OutfitBuilder";
+import { Intro } from "@/components/outfit/Intro";
 import { SHOP } from "@/lib/catalog";
 import { LanguageToggle, useI18n } from "@/lib/i18n";
+import { shouldShowIntro } from "@/lib/intro";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,6 +29,13 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { t } = useI18n();
+  const [intro, setIntro] = useState(false);
+
+  // Solo lato client: al primo accesso apriamo la presentazione del negozio.
+  useEffect(() => {
+    if (shouldShowIntro()) setIntro(true);
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="relative px-6 pb-3 pt-5 text-center">
@@ -44,6 +54,9 @@ function Index() {
         <p>{SHOP.address}</p>
         <p>{t("hours")}</p>
         <p className="mt-2 flex justify-center gap-4">
+          <button type="button" onClick={() => setIntro(true)} className="underline underline-offset-4">
+            {t("introHowItWorks")}
+          </button>
           <a className="underline underline-offset-4" href={SHOP.instagram} target="_blank" rel="noreferrer">
             Instagram
           </a>
@@ -57,6 +70,8 @@ function Index() {
           </a>
         </p>
       </footer>
+
+      <Intro open={intro} onClose={() => setIntro(false)} />
     </div>
   );
 }

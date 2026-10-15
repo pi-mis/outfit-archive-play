@@ -73,6 +73,44 @@ const DICT: Dict = {
   },
   holdRequest: { it: "Richiesta 24h per", en: "24h hold request for" },
   langLabel: { it: "Lingua", en: "Language" },
+  // intro del primo accesso
+  introHowItWorks: { it: "Come funziona", en: "How it works" },
+  introSkip: { it: "Salta", en: "Skip" },
+  introNext: { it: "Avanti", en: "Next" },
+  introStart: { it: "Inizia a vestire", en: "Start dressing" },
+  introEyebrow1: { it: "Benvenuta", en: "Welcome" },
+  introTitle1: {
+    it: "Qui non si compra: si gioca a vestirsi",
+    en: "You don't shop here: you play dress-up",
+  },
+  introBody1: {
+    it: "Cinque fasce — cappello, collana, capo, pantaloni, scarpe — e dentro c'è tutto l'archivio del negozio. Scorri con il dito e componi il tuo outfit, come una paper doll cresciuta bene.",
+    en: "Five bands — hat, necklace, top, bottom, shoes — holding the shop's whole archive. Swipe with a finger and build your outfit, like a paper doll that grew up well.",
+  },
+  introEyebrow2: { it: "Come funziona", en: "How it works" },
+  introTitle2: {
+    it: "Un dito, un lucchetto, un pulsante magico",
+    en: "One finger, one padlock, one magic button",
+  },
+  introBody2: {
+    it: "Scegli il tipo dal menù e scorri per cambiare capo. Il lucchetto tiene fermo quello che ami, «Sorprendimi» pensa per te quando le idee finiscono. Tocca un capo per taglia, misure e prezzo.",
+    en: "Pick a type from the menu and swipe to change piece. The padlock holds what you love, “Surprise me” thinks for you when ideas run dry. Tap a piece for size, measurements and price.",
+  },
+  introEyebrow3: { it: "Perché è diverso", en: "Why it's different" },
+  introTitle3: { it: "Ogni capo esiste una volta sola", en: "Every piece exists only once" },
+  introBody3: {
+    it: "Niente griglie con quattrocento magliette identiche: qui ogni pezzo è l'unico esemplare rimasto in circolazione. Per questo lo trovi su un manichino e non in una lista — e nel camerino lo vedi nelle proporzioni vere.",
+    en: "No grid of four hundred identical t-shirts: here each piece is the only one left in circulation. That's why it sits on a mannequin instead of in a list — and in the fitting room you see it in real proportions.",
+  },
+  introEyebrow4: { it: "In cosa crediamo", en: "What we believe in" },
+  introTitle4: {
+    it: "La moda più sostenibile è quella che esiste già",
+    en: "The most sustainable fashion already exists",
+  },
+  introBody4: {
+    it: "Capi scelti uno per uno, misure reali e difetti dichiarati: nessuna sorpresa all'arrivo. Scegli qui e vieni a provarlo in negozio.",
+    en: "Pieces chosen one by one, real measurements and flaws declared up front: no surprises. Choose here, then come and try it on in the shop.",
+  },
 };
 
 const ZONE_LABELS_EN: Record<string, { label: string; all: string; none: string }> = {
